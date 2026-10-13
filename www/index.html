@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1E2A5A">
+<title>الحركة العامة — v4.3.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF5;--bg-soft:#F4F4EC;--card:#FFF;--ink:#1A1A1A;--ink-soft:#4B5563;--ink-muted:#6B7280;--border:#E5E7EB;--navy:#1E2A5A;--navy-soft:#2F3F7A;--gold:#C9A961;--gold-soft:#F4E9CF;--green:#10B981;--green-soft:#F0FDF4;--yellow:#F59E0B;--yellow-soft:#FFFBEB;--purple:#8B5CF6;--purple-soft:#F5F3FF;--red:#DC2626;--red-soft:#FEF2F2;--blue:#2563EB;--blue-soft:#EFF6FF;--teal:#0D9488;--teal-soft:#F0FDFA;--shadow:0 2px 12px rgba(30,42,90,.06);--radius:14px;--radius-sm:8px;--font:"Tajawal",system-ui,sans-serif;--font-serif:"Amiri","Traditional Arabic",serif}
+[data-theme="dark"]{--bg:#0F1419;--bg-soft:#1A2029;--card:#1A2029;--ink:#E8EAED;--ink-soft:#B8BDC7;--ink-muted:#8B92A0;--border:#2D3640;--navy:#7BA3E8;--navy-soft:#5A82C7;--gold:#E0B86B;--gold-soft:#2A2418;--green:#34D399;--green-soft:#0F2A20;--yellow:#FBBF24;--yellow-soft:#2A2110;--purple:#A78BFA;--purple-soft:#1F1835;--red:#F87171;--red-soft:#2D1414;--blue:#60A5FA;--blue-soft:#0F1F33;--teal:#2DD4BF;--teal-soft:#0E2622}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{padding-bottom:60px}
+a{color:var(--navy);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit;font-size:1rem}
+.topbar{background:var(--navy);color:#fff;padding:14px 18px;position:sticky;top:0;z-index:100}
+.topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:6px}
+.topbar .version{font-size:.7rem;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:10px;font-weight:400}
+.topbar-actions{display:flex;gap:8px}
+.icon-btn{background:rgba(255,255,255,.12);color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.nav{background:var(--navy-soft);position:sticky;top:54px;z-index:99;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:2px;padding:0 10px;white-space:nowrap}
+.nav a{color:rgba(255,255,255,.75);padding:11px 12px;font-size:.82rem;font-weight:500;border-bottom:3px solid transparent;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nav a.active{color:#fff;border-bottom-color:var(--gold);font-weight:700}
+.nav a .badge{background:var(--gold);color:#1A1A1A;font-size:.62rem;font-weight:700;padding:1px 6px;border-radius:8px}
+.container{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+.screen{display:none}.screen.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{display:flex;align-items:center;gap:10px;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:12px;flex-wrap:wrap}
+.card-title .icon{font-size:1.2rem}
+.card-sub{color:var(--ink-muted);font-size:.88rem;margin-bottom:14px;line-height:1.7}
+.tier-badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:.7rem;font-weight:600;margin-inline-start:4px}
+.tier-green{background:var(--green-soft);color:#047857;border:1px solid #A7F3D0}
+.tier-yellow{background:var(--yellow-soft);color:#B45309;border:1px solid #FCD34D}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 100%);color:#fff;padding:24px 20px;border-radius:var(--radius);margin-bottom:18px}
+.hero h2{font-size:1.35rem;margin-bottom:8px;font-weight:700}
+.hero p{font-size:.9rem;opacity:.92;line-height:1.85}
+.hero .quote{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.10);border-inline-start:3px solid var(--gold);border-radius:var(--radius-sm);font-family:var(--font-serif);font-size:.95rem;font-style:italic}
+.input-row{display:flex;gap:10px;margin-bottom:14px}
+.input-row input{flex:1;padding:14px 16px;border:2px solid var(--navy);border-radius:var(--radius);font-size:1.15rem;background:var(--card);font-family:var(--font-serif);text-align:center;font-weight:700;color:var(--ink)}
+.input-row input:focus{outline:none;border-color:var(--gold)}
+.btn-primary{background:var(--navy);color:#fff;padding:14px 28px;border-radius:var(--radius);font-size:1rem;font-weight:700}
+.btn-secondary{background:var(--bg-soft);color:var(--ink);padding:8px 16px;border-radius:var(--radius-sm);font-size:.85rem;border:1px solid var(--border);font-weight:500}
+.examples-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.example-chip{background:var(--gold-soft);color:#7A5A1A;padding:6px 16px;border-radius:20px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:var(--font-serif)}
+.example-chip:hover{background:var(--gold);color:#fff}
+.movement-main{background:var(--gold-soft);border:2px solid var(--gold);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:16px}
+.movement-main .label{color:#7A5A1A;font-size:.82rem;font-weight:700;margin-bottom:6px}
+.movement-main .value{font-size:1.6rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);line-height:1.6}
+.words-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.word-tag{background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:.95rem;font-weight:700;font-family:var(--font-serif);color:var(--navy);display:inline-flex;align-items:center;gap:4px}
+.tier-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green)}
+.role-mini{font-size:.62rem;font-weight:600;padding:1px 6px;border-radius:8px}
+.role-mini.r1{background:#DCFCE7;color:#166534}
+.role-mini.r2{background:#DBEAFE;color:#1E40AF}
+.role-mini.r3{background:#FEF3C7;color:#B45309}
+.role-mini.r4{background:#EDE9FE;color:#5B21B6}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.info-cell{background:var(--bg-soft);padding:12px;border-radius:var(--radius-sm);text-align:center;border:1px solid var(--border)}
+.info-cell .k{font-size:.75rem;color:var(--ink-muted);margin-bottom:4px}
+.info-cell .v{font-size:1.15rem;font-weight:700;color:var(--navy);font-family:var(--font-serif)}
+.metric-card{padding:14px 16px;border-radius:var(--radius);margin-bottom:10px;border:1px solid var(--border);background:var(--bg-soft)}
+.metric-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.metric-label{font-weight:700;font-size:.92rem;color:var(--navy)}
+.metric-detail{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
+.radar-wrap{display:flex;justify-content:center;padding:16px 0;background:var(--bg-soft);border-radius:var(--radius);margin-bottom:12px}
+.radar-svg{max-width:340px;width:100%;height:auto}
+.axes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.axis-cell{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg-soft);border-radius:var(--radius-sm);font-size:.85rem;border:1px solid var(--border)}
+.axis-cell .k{color:var(--ink-muted);font-weight:500}
+.axis-cell .v{color:var(--navy);font-weight:700;font-family:var(--font-serif)}
+.timeline{display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:wrap;padding-top:26px}
+.tl-node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tl-role-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.tl-node{background:#F0FDF4;border:2px solid #86EFAC;border-radius:var(--radius);padding:14px 18px;text-align:center;min-width:120px}
+.tl-node.role-2{background:#EFF6FF;border-color:#93C5FD}
+.tl-node.role-3{background:#FFFBEB;border-color:#FCD34D}
+.tl-node.role-4{background:#F5F3FF;border-color:#C4B5FD}
+.tl-char{font-size:1.8rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);margin-bottom:4px}
+.tl-label{font-size:.78rem;color:var(--ink-soft);line-height:1.5}
+.tl-arrow{color:var(--gold);font-size:1.4rem;padding:6px 8px 0}
+.speed-bar-wrap{background:var(--bg-soft);border-radius:var(--radius);padding:18px 16px;margin-bottom:12px}
+.speed-bar{height:14px;background:linear-gradient(90deg,var(--purple) 0%,var(--gold) 50%,var(--red) 100%);border-radius:7px;position:relative;margin-bottom:12px}
+.speed-marker{position:absolute;top:-4px;width:22px;height:22px;background:#fff;border:3px solid var(--navy);border-radius:50%;transform:translateX(-50%)}
+.speed-value{text-align:center;font-size:1.4rem;font-weight:700;color:var(--navy);font-family:var(--font-serif)}
+.speed-verdict{text-align:center;font-size:.9rem;color:var(--ink-soft);margin-top:4px}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.perm-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.perm-card.original{border-color:var(--gold);background:var(--gold-soft)}
+.perm-word{font-size:1.5rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);text-align:center;margin-bottom:8px}
+.perm-movement{font-size:.85rem;color:var(--ink-soft);line-height:1.75;text-align:center}
+.perm-badge{display:block;text-align:center;font-size:.72rem;color:#7A5A1A;font-weight:700;margin-bottom:6px}
+.root-letters{display:flex;justify-content:center;gap:20px;padding:24px 16px;background:var(--gold-soft);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap}
+.root-letter{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:90px}
+.root-letter .glyph{width:72px;height:72px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:700;font-family:var(--font-serif)}
+.root-letter .role{font-size:.72rem;font-weight:700;text-align:center;padding:3px 8px;border-radius:10px;background:#DCFCE7;color:#166534}
+.root-letter .label{font-size:.8rem;color:var(--navy);font-weight:500;text-align:center;max-width:110px;font-family:var(--font-serif)}
+.deriv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.deriv-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;border-top:3px solid var(--navy)}
+.deriv-card.mizid{border-top-color:var(--gold)}
+.deriv-card.mujarrad{border-top-color:var(--green)}
+.deriv-card.mazid2{border-top-color:var(--purple)}
+.deriv-weight{font-size:.72rem;color:var(--ink-muted);font-weight:700;margin-bottom:4px;font-family:var(--font-serif);text-align:center}
+.deriv-word{font-size:1.7rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);text-align:center;margin-bottom:8px}
+.deriv-effect{font-size:.78rem;color:var(--ink-soft);text-align:center;padding:6px 10px;background:var(--bg-soft);border-radius:var(--radius-sm);margin-bottom:10px}
+.deriv-added{display:flex;justify-content:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.deriv-added .zawaid{background:var(--yellow-soft);border:1px solid #FCD34D;color:#B45309;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:700;font-family:var(--font-serif)}
+.deriv-movement{font-size:.82rem;color:var(--ink-soft);line-height:1.7;padding-top:10px;border-top:1px dashed var(--border);text-align:center}
+.deriv-movement strong{color:var(--navy);display:block;font-size:.85rem;margin-bottom:4px}
+.deriv-movement .mv-text{font-family:var(--font-serif);font-size:.92rem;color:var(--navy);font-weight:500}
+.letters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.letter-cell{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;cursor:pointer;border-inline-start:4px solid var(--green)}
+.letter-cell[data-tier="yellow"]{border-inline-start-color:var(--yellow)}
+.letter-cell .glyph{font-size:2.2rem;font-weight:700;font-family:var(--font-serif);color:var(--navy);margin-bottom:4px}
+.letter-cell .movement{font-size:.72rem;color:var(--ink-muted);line-height:1.4}
+.compare-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.compare-input{padding:12px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1.15rem;font-family:var(--font-serif);text-align:center;width:100%;background:var(--card);font-weight:700;color:var(--ink)}
+.compare-result{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare-col{background:var(--bg-soft);border-radius:var(--radius);padding:14px;border:1px solid var(--border)}
+.compare-col h4{font-size:1.4rem;color:var(--navy);font-family:var(--font-serif);text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.compare-movement{font-size:1rem;line-height:1.8;color:var(--ink-soft);text-align:center;font-family:var(--font-serif)}
+.compare-verdict{background:var(--gold-soft);border:1px solid var(--gold);border-radius:var(--radius);padding:14px 18px;margin-top:16px;font-size:.92rem;line-height:1.85;color:#7A5A1A}
+.personal-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.personal-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;text-align:center;border-top:3px solid var(--navy)}
+.personal-stat .num{font-size:1.8rem;font-weight:800;color:var(--navy);font-family:var(--font-serif);line-height:1.1}
+.personal-stat .num.small{font-size:1.3rem}
+.personal-stat .lbl{font-size:.78rem;color:var(--ink-muted);margin-top:6px}
+.personal-stat.green{border-top-color:var(--green)}.personal-stat.yellow{border-top-color:var(--yellow)}.personal-stat.purple{border-top-color:var(--purple)}.personal-stat.blue{border-top-color:var(--blue)}
+.bar-chart{display:flex;flex-direction:column;gap:8px}
+.bar-chart-row{display:flex;align-items:center;gap:10px;font-size:.88rem}
+.bar-chart-label{min-width:70px;font-weight:600;color:var(--ink-soft)}
+.bar-chart-bar-wrap{flex:1;background:var(--bg-soft);border-radius:8px;overflow:hidden;height:22px}
+.bar-chart-bar{height:100%;border-radius:8px;display:flex;align-items:center;padding-inline-end:8px;justify-content:flex-end;color:#fff;font-size:.72rem;font-weight:700;min-width:30px}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.heatmap-cell{aspect-ratio:1;border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-weight:700;font-size:1.3rem;cursor:pointer;background:var(--bg-soft);position:relative}
+.heatmap-cell[data-lv="1"]{background:#DCFCE7;color:#166534;border-color:#86EFAC}
+.heatmap-cell[data-lv="2"]{background:#A7F3D0;color:#065F46;border-color:#34D399}
+.heatmap-cell[data-lv="3"]{background:#6EE7B7;color:#064E3B;border-color:#10B981}
+.heatmap-cell[data-lv="4"]{background:#10B981;color:#fff;border-color:#047857}
+.heatmap-cell[data-lv="5"]{background:#047857;color:#fff;border-color:#064E3B}
+.heatmap-cell .count-badge{position:absolute;bottom:2px;left:4px;font-size:.6rem;font-weight:700}
+#sphere-container{width:100%;height:420px;background:var(--bg-soft);border-radius:var(--radius);position:relative;overflow:hidden}
+#sphere-container canvas{display:block;width:100%;height:100%}
+.sphere-hint{position:absolute;bottom:12px;right:12px;font-size:.75rem;color:var(--ink-muted);background:rgba(255,255,255,.9);padding:4px 10px;border-radius:12px;pointer-events:none}
+.loading{text-align:center;padding:30px;color:var(--ink-muted);font-size:.9rem}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{background:var(--red-soft);border:1px solid #FECACA;color:#991B1B;padding:14px;border-radius:var(--radius);font-size:.9rem;margin-bottom:12px}
+.info-box{background:var(--blue-soft);border:1px solid #BFDBFE;color:#1E40AF;padding:14px;border-radius:var(--radius);font-size:.88rem;margin-bottom:12px;line-height:1.85}
+.empty-state{text-align:center;padding:40px 20px;color:var(--ink-muted);font-size:.9rem}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 24px;border-radius:24px;font-size:.9rem;font-weight:600;z-index:9999;opacity:0;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.footer{text-align:center;padding:24px 16px;color:var(--ink-muted);font-size:.82rem;line-height:1.85;border-top:1px solid var(--border);margin-top:40px}
+.niu-card{border-color:var(--gold);background:var(--gold-soft)}
+.niu-card .card-title{color:#7A5A1A}
+.seq-search{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1rem;margin-bottom:14px;font-family:var(--font);background:var(--card);color:var(--ink)}
+.seq-search:focus{outline:none;border-color:var(--navy)}
+.seq-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.seq-filter{background:var(--bg-soft);border:1px solid var(--border);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--ink-soft)}
+.seq-filter.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.seq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;border-inline-start:4px solid var(--green)}
+.seq-item:hover{border-color:var(--navy);box-shadow:var(--shadow)}
+.seq-word{font-size:1.3rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);margin-bottom:4px}
+.seq-text{font-size:.85rem;color:var(--ink-soft);line-height:1.75;white-space:pre-line}
+.seq-source{font-size:.7rem;color:var(--ink-muted);margin-top:6px;font-style:italic}
+.seq-count{font-size:.8rem;color:var(--ink-muted);text-align:center;padding:10px;font-weight:600}
+.narrative-report{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-top:16px;border-inline-start:4px solid var(--gold)}
+.narrative-title{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;justify-content:space-between}
+.narrative-close{background:var(--bg-soft);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--ink-muted);cursor:pointer}
+.narrative-line{display:flex;gap:10px;align-items:flex-start;padding:9px 0;font-size:.92rem;line-height:1.9;border-bottom:1px dashed var(--bg-soft)}
+.narrative-line:last-child{border-bottom:none}
+.narrative-tag{flex-shrink:0;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:10px;margin-top:4px;white-space:nowrap}
+.narrative-tag-desc{background:#F3F4F6;color:#374151}
+.narrative-tag-extract{background:#DBEAFE;color:#1E40AF}
+.narrative-tag-doc{background:#FEF3C7;color:#7A5A1A;border:1px solid var(--gold)}
+.narrative-tag-warn{background:#FEE2E2;color:#991B1B}
+.narrative-tag-divine{background:#D1FAE5;color:#065F46;border:1px solid #10B981}
+.narrative-tag-levels{background:#EDE9FE;color:#5B21B6;border:1px solid #8B5CF6}
+.narrative-text{flex:1;color:var(--ink-soft)}
+.narrative-source{font-size:.78rem;color:var(--ink-muted);font-style:italic;flex-shrink:0}
+.narrative-btn{background:var(--gold-soft);color:#7A5A1A;border:1px solid var(--gold);padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+.narrative-btn:hover{background:var(--gold);color:#fff}.narrative-btn.active{background:var(--gold);color:#fff}
+.divine-btn{background:#D1FAE5;color:#065F46;border:1px solid #10B981;padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+.divine-btn:hover{background:#10B981;color:#fff}.divine-btn.active{background:#10B981;color:#fff}
+.levels-btn{background:#EDE9FE;color:#5B21B6;border:1px solid #8B5CF6;padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+.levels-btn:hover{background:#8B5CF6;color:#fff}.levels-btn.active{background:#8B5CF6;color:#fff}
+.quran-btn{background:#DBEAFE;color:#1E40AF;border:1px solid #2563EB;padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+.quran-btn:hover{background:#2563EB;color:#fff}.quran-btn.active{background:#2563EB;color:#fff}
+.articul-btn{background:#FEF3C7;color:#B45309;border:1px solid #F59E0B;padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+.articul-btn:hover{background:#F59E0B;color:#fff}.articul-btn.active{background:#F59E0B;color:#fff}
+.divine-layer{background:#F0FDF4;border:2px solid #10B981;border-radius:var(--radius);padding:18px 20px;margin-top:16px}
+.divine-layer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #A7F3D0;flex-wrap:wrap;gap:6px}
+.divine-layer-header .title{font-weight:700;color:#065F46;font-size:1rem;display:flex;align-items:center;gap:8px}
+.divine-layer-header .close{background:#F0FDF4;border:1px solid #10B981;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#065F46;cursor:pointer}
+.divine-notice{background:#FFF;border:1px dashed #10B981;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:#065F46;line-height:1.75}
+.divine-letter-block{background:#FFF;border:1px solid #A7F3D0;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:12px}
+.divine-letter-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed #A7F3D0}
+.divine-letter-glyph{width:52px;height:52px;border-radius:50%;background:#10B981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;font-family:var(--font-serif);flex-shrink:0}
+.divine-letter-info{flex:1;min-width:0}
+.divine-letter-name{font-size:.95rem;font-weight:700;color:#065F46;margin-bottom:2px}
+.divine-letter-role{font-size:.75rem;color:#047857;line-height:1.5}
+.divine-row{display:flex;gap:8px;padding:7px 0;font-size:.85rem;line-height:1.75;border-bottom:1px dashed #F0FDF4}
+.divine-row:last-child{border-bottom:none}
+.divine-row .label{flex-shrink:0;font-weight:700;color:#047857;min-width:110px}
+.divine-row .content{flex:1;color:var(--ink-soft)}
+.divine-synthesis{background:#FFF;border:2px solid #10B981;border-radius:var(--radius-sm);padding:16px 18px;margin-top:14px}
+.divine-synthesis-title{font-weight:700;color:#065F46;font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.divine-synthesis-text{font-family:var(--font-serif);font-size:1rem;line-height:2;color:#064E3B}
+.divine-warning{background:#FFFBEB;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;font-size:.8rem;color:#92400E;line-height:1.75}
+.aspects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.aspect-card{background:#FFF;border:1px solid #C4B5FD;border-radius:var(--radius-sm);padding:12px 14px;border-inline-start:4px solid #8B5CF6}
+.aspect-label{font-size:.78rem;font-weight:700;color:#5B21B6;margin-bottom:6px}
+.aspect-text{font-size:.85rem;color:var(--ink-soft);line-height:1.75}
+.levels-layer{background:#F5F3FF;border:2px solid #8B5CF6;border-radius:var(--radius);padding:18px 20px;margin-top:16px}
+.levels-layer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #C4B5FD}
+.levels-layer-header .title{font-weight:700;color:#5B21B6;font-size:1rem;display:flex;align-items:center;gap:8px}
+.levels-layer-header .close{background:#F5F3FF;border:1px solid #8B5CF6;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#5B21B6;cursor:pointer}
+.level-block{background:#FFF;border:1px solid #C4B5FD;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px}
+.level-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed #C4B5FD}
+.level-glyph{width:52px;height:52px;border-radius:50%;background:#8B5CF6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;font-family:var(--font-serif);flex-shrink:0}
+.level-name{font-size:1rem;font-weight:700;color:#5B21B6}
+.level-movement{font-size:.8rem;color:#6D28D9;margin-top:2px}
+.level-tier{margin-top:12px;padding:12px 14px;border-radius:var(--radius-sm);border-inline-start:4px solid #8B5CF6;background:#F5F3FF}
+.level-tier-num{display:inline-block;width:24px;height:24px;border-radius:50%;background:#8B5CF6;color:#fff;text-align:center;line-height:24px;font-size:.75rem;font-weight:700;margin-inline-end:8px}
+.level-tier-label{font-weight:700;color:#5B21B6;font-size:.85rem;display:inline-block;margin-bottom:6px}
+.level-tier-text{font-size:.88rem;color:var(--ink);line-height:1.85;margin-top:6px}
+.level-tier.li-1{border-inline-start-color:#3B82F6;background:#EFF6FF}.level-tier.li-1 .level-tier-num{background:#3B82F6}.level-tier.li-1 .level-tier-label{color:#1E40AF}
+.level-tier.li-2{border-inline-start-color:#10B981;background:#F0FDF4}.level-tier.li-2 .level-tier-num{background:#10B981}.level-tier.li-2 .level-tier-label{color:#065F46}
+.level-tier.li-3{border-inline-start-color:#F59E0B;background:#FFFBEB}.level-tier.li-3 .level-tier-num{background:#F59E0B}.level-tier.li-3 .level-tier-label{color:#92400E}
+.level-tier.li-4{border-inline-start-color:#DC2626;background:#FEF2F2}.level-tier.li-4 .level-tier-num{background:#DC2626}.level-tier.li-4 .level-tier-label{color:#991B1B}
+.level-synthesis{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:2px solid #8B5CF6;border-radius:var(--radius-sm);padding:16px 18px;margin-top:14px}
+.level-synthesis-title{font-weight:700;color:#5B21B6;font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.level-synthesis-text{font-family:var(--font-serif);font-size:1rem;line-height:2;color:#4C1D95}
+.quran-layer{background:#EFF6FF;border:2px solid #2563EB;border-radius:var(--radius);padding:18px 20px;margin-top:16px}
+.quran-layer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #BFDBFE}
+.quran-layer-header .title{font-weight:700;color:#1E40AF;font-size:1rem;display:flex;align-items:center;gap:8px}
+.quran-layer-header .close{background:#EFF6FF;border:1px solid #2563EB;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#1E40AF;cursor:pointer}
+.quran-verse{background:#FFF;border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px}
+.quran-verse-ref{font-size:.75rem;color:#1E40AF;font-weight:700;margin-bottom:6px}
+.quran-verse-text{font-family:var(--font-serif);font-size:1.05rem;line-height:2;color:var(--navy)}
+.quran-empty{background:#FFF;border:1px dashed #BFDBFE;border-radius:var(--radius-sm);padding:20px;text-align:center;color:#6B7280;font-size:.88rem}
+.articulation-layer{background:#FFFBEB;border:2px solid #F59E0B;border-radius:var(--radius);padding:18px 20px;margin-top:16px}
+.articulation-layer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #FCD34D}
+.articulation-layer-header .title{font-weight:700;color:#B45309;font-size:1rem;display:flex;align-items:center;gap:8px}
+.articulation-layer-header .close{background:#FFFBEB;border:1px solid #F59E0B;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#B45309;cursor:pointer}
+.articulation-block{background:#FFF;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px}
+.articulation-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.articulation-glyph{width:44px;height:44px;border-radius:50%;background:#F59E0B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;font-family:var(--font-serif);flex-shrink:0}
+.articulation-name{font-weight:700;color:#B45309;font-size:.9rem}
+.articulation-row{display:flex;gap:8px;padding:5px 0;font-size:.82rem;line-height:1.7;border-bottom:1px dashed #FEF3C7}
+.articulation-row:last-child{border-bottom:none}
+.articulation-row .label{flex-shrink:0;font-weight:700;color:#B45309;min-width:90px}
+.articulation-row .content{flex:1;color:var(--ink-soft)}
+.chat-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:16px;border-inline-start:4px solid var(--navy)}
+.chat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px}
+.chat-header span{font-weight:700;color:var(--navy);font-size:.95rem}
+.chat-header small{font-size:.75rem;color:var(--ink-muted)}
+.chat-messages{max-height:420px;overflow-y:auto;padding:8px 4px;margin-bottom:12px;scroll-behavior:smooth}
+.chat-messages:empty::before{content:"لم تبدأ المحاورة بعد — اختر سؤالًا أو اكتب سؤالك.";color:var(--ink-muted);font-size:.85rem;display:block;text-align:center;padding:20px}
+.chat-msg{margin-bottom:10px;display:flex}
+.chat-user{justify-content:flex-start}.chat-ai{justify-content:flex-end}
+.chat-bubble{padding:10px 14px;border-radius:14px;font-size:.9rem;line-height:1.85;max-width:88%;word-wrap:break-word}
+.chat-user .chat-bubble{background:var(--navy);color:#fff;border-bottom-left-radius:4px}
+.chat-ai .chat-bubble{background:var(--gold-soft);color:#5A4210;border:1px solid var(--gold);border-bottom-right-radius:4px;font-family:var(--font)}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chat-chip{background:var(--bg-soft);border:1px solid var(--border);padding:6px 12px;border-radius:16px;font-size:.78rem;cursor:pointer;color:var(--ink-soft);font-family:inherit;transition:all .15s}
+.chat-chip:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chat-input-row{display:flex;gap:8px}
+.chat-input-row input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-size:.9rem;background:var(--card);color:var(--ink);font-family:inherit}
+.chat-input-row input:focus{outline:none;border-color:var(--navy)}
+.chat-input-row button{background:var(--navy);color:#fff;padding:10px 20px;border-radius:var(--radius);font-weight:700;font-size:.85rem;cursor:pointer;border:none;font-family:inherit}
+@media(max-width:480px){.topbar h1{font-size:1rem}.nav a{padding:10px 10px;font-size:.76rem}.input-row{flex-direction:column}.btn-primary{width:100%}.movement-main .value{font-size:1.3rem}.deriv-grid{grid-template-columns:1fr}.compare-row,.compare-result{grid-template-columns:1fr}.narrative-line{flex-direction:column;gap:4px}.chat-input-row{flex-direction:column}.chat-input-row button{width:100%}.divine-row{flex-direction:column}.divine-row .label{min-width:auto}.aspects-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><h1>الحركة العامة <span class="version">v4.3.0</span></h1><div class="topbar-actions"><button class="icon-btn" id="theme-btn">🌙</button></div></div></header>
+<nav class="nav"><div class="nav-inner" id="nav">
+<a href="#home" data-screen="home" class="active">🏠 الرئيسية</a>
+<a href="#sequences" data-screen="sequences">📚 التسلسلات <span class="badge" id="seq-badge">0</span></a>
+<a href="#analysis" data-screen="analysis">🔍 التحليل</a>
+<a href="#root" data-screen="root">🌳 الجذر</a>
+<a href="#letters" data-screen="letters">🔤 الحروف</a>
+<a href="#attrs" data-screen="attrs">📊 الجدول الشامل</a>
+<a href="#levels" data-screen="levels">🎚️ الطبقات</a>
+<a href="#divine" data-screen="divine">✨ الأسماء</a>
+<a href="#articulation" data-screen="articulation">🔊 المخارج</a>
+<a href="#contrasts" data-screen="contrasts">🔬 الفروق</a>
+<a href="#manifestations" data-screen="manifestations">🅰️ المظاهر</a>
+<a href="#doors" data-screen="doors">🚪 الأبواب</a>
+<a href="#groups" data-screen="groups">🔷 المجموعات</a>
+<a href="#translation" data-screen="translation">🌍 الترجمة</a>
+<a href="#protection" data-screen="protection">🛡️ الحماية</a>
+<a href="#particles" data-screen="particles">📖 المفردة</a>
+<a href="#compare" data-screen="compare">⚖️ المقارنة</a>
+<a href="#history" data-screen="history">📋 السجل</a>
+<a href="#stats" data-screen="stats">📊 الإحصائيات</a>
+<a href="#rules" data-screen="rules">📜 القواعد</a>
+</div></nav>
+<main class="container">
+
+<section id="screen-home" class="screen active">
+<div class="hero"><h2>الحركة العامة — المصوفة الـ 28</h2><p>استخراج الحركة العامة لأي تسلسل صوتي على طريقة عالم سبيط النيلي.</p><div class="quote">«المعنى الكامل = مجموع الحركات ⊕ ترتيبها»</div></div>
+<div class="card"><div class="card-title"><span class="icon">✍️</span> اكتب أي تسلسل</div>
+<div class="input-row"><input type="text" id="word-input" placeholder="حد، حمد، ضرب، كتب، رواسي..." autocomplete="off" spellcheck="false"><button class="btn-primary" id="analyze-btn">استخراج</button></div>
+<div class="examples-row" id="examples-row">
+<span class="example-chip" data-word="حد">حد</span><span class="example-chip" data-word="رواسي">رواسي</span><span class="example-chip" data-word="دحر">دحر</span><span class="example-chip" data-word="ضرب">ضرب</span><span class="example-chip" data-word="كتب">كتب</span><span class="example-chip" data-word="خلق">خلق</span><span class="example-chip" data-word="حمد">حمد</span><span class="example-chip" data-word="علم">علم</span>
+</div></div>
+<div class="card" style="background:#EDE9FE;border-color:#8B5CF6;"><div style="font-size:.9rem;line-height:1.85;color:#5B21B6;">📜 <strong>جديد v4.3.0:</strong> <strong>الطبقة الذكية النيلية</strong> — سرد من 11 خطوة · 6 روابط مُبرَّرة · 5 نبرات نابعة · فلتر 8 محظورات · 4 شروط ثقة · خاتمة مقيّدة · حدّ المعنى عند 4/4.</div></div>
+</section>
+
+<section id="screen-sequences" class="screen"><div class="card"><div class="card-title"><span class="icon">📚</span> التسلسلات الموثّقة <span class="tier-badge tier-green" id="seq-total">0</span></div><input type="text" class="seq-search" id="seq-search" placeholder="🔍 ابحث..." autocomplete="off"><div class="seq-filters" id="seq-filters"></div></div><div id="sequences-list"></div></section>
+<section id="screen-analysis" class="screen"><div id="analysis-output"><div class="empty-state"><div style="font-size:2.5rem;margin-bottom:8px;">🔍</div>اكتب تسلسلًا واضغط «استخراج»</div></div></section>
+<section id="screen-root" class="screen"><div class="card"><div class="card-title"><span class="icon">🌳</span> الجذر والاشتقاق</div><div class="input-row"><input type="text" id="root-input" placeholder="علم، حمد..." autocomplete="off"><button class="btn-primary" id="root-btn">تحليل</button></div><div class="examples-row"><span class="example-chip" data-root="علم">علم</span><span class="example-chip" data-root="حمد">حمد</span><span class="example-chip" data-root="دحر">دحر</span><span class="example-chip" data-root="كتب">كتب</span></div></div><div id="root-output"></div></section>
+<section id="screen-letters" class="screen"><div class="card"><div class="card-title"><span class="icon">🔤</span> المصوفة الـ 28</div><div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;font-size:.85rem;"><span>🟢 ج1 (14)</span><span>🟡 ج2 (14)</span></div><div class="letters-grid" id="letters-grid"></div></div><div id="letter-detail"></div></section>
+
+<section id="screen-attrs" class="screen">
+<div class="card" style="border-inline-start:4px solid var(--gold);">
+<div class="card-title"><span class="icon">📊</span> جدول الحروف الشامل — 22 حقلًا × 28 حرفًا</div>
+<p class="card-sub">الأسماء الإلهية من روايتَي الإمام عليّ والرضا (ع) · الأبراج والمنازل القمرية · الدرجات · العلوي/السفلي · النوراني/الظلماني · الطبعان (أبجد وأيقغ) مع الإسقاطين · الكواكب · الأوزان · الجمالي/الجلالي · السعد/النحس · الناطق/الصامت · حروف الشفا · حروف التسخير.</p>
+<div class="divine-notice" style="background:#FFFBEB;border-color:#F59E0B;color:#92400E;">⚠️ طبقة مرويّة ووصفيّة — تُعرض للاستئناس لا للاستدلال، ولا يُبنى عليها حكم قرآنيّ.</div>
+</div>
+<div id="attrs-content"></div>
+</section>
+
+<section id="screen-levels" class="screen"><div class="card" style="border-inline-start:4px solid #8B5CF6;"><div class="card-title"><span class="icon">🎚️</span> الطبقات البنيوية الأربع لكلّ حرف</div><p class="card-sub">لكلّ حرف من الحروف الـ28 أربع طبقات: ① الحركة البنيوية · ② التصوّر الوجوديّ · ③ الكيفية · ④ الاسم الإلهي المطابق. متكاملة، لا متناقضة.</p></div><div id="levels-content"></div></section>
+<section id="screen-divine" class="screen"><div class="card" style="border-inline-start:4px solid #10B981;"><div class="card-title"><span class="icon">✨</span> الطبقة الاسمائية</div><p class="card-sub">روايات أهل البيت (ع) تربط كلّ حرف بأسماء إلهية — حيثيات متعدّدة متكاملة، لا متناقضة.</p><div class="divine-notice">⚠️ طبقة مرويّة، لا مستخرجة. تُعرض للاستئناس.</div></div><div id="divine-layer-full"></div></section>
+<section id="screen-articulation" class="screen"><div class="card" style="border-inline-start:4px solid #F59E0B;"><div class="card-title"><span class="icon">🔊</span> مخارج الحروف الـ28</div></div><div id="articulation-content"></div></section>
+<section id="screen-contrasts" class="screen"><div class="card"><div class="card-title"><span class="icon">🔬</span> الفروق</div><div id="contrasts-content"></div></div></section>
+<section id="screen-manifestations" class="screen"><div class="card"><div class="card-title"><span class="icon">🅰️</span> مظاهر الألف</div><div id="manifestations-content"></div></div><div class="card"><div class="card-title"><span class="icon">✒️</span> العلامات الزمكانية</div><div id="markers-content"></div></div></section>
+<section id="screen-doors" class="screen"><div class="card"><div class="card-title"><span class="icon">🚪</span> الأبواب الستة</div><div id="doors-content"></div></div></section>
+<section id="screen-groups" class="screen"><div class="card"><div class="card-title"><span class="icon">🔷</span> المجموعات السبع</div><div id="groups-content"></div></div><div class="card"><div class="card-title"><span class="icon">🔢</span> العلاقات العددية</div><div id="numbers-content"></div></div><div class="card"><div class="card-title"><span class="icon">🫁</span> آلة النطق</div><div id="apparatus-content"></div></div></section>
+<section id="screen-translation" class="screen"><div class="card"><div class="card-title"><span class="icon">🌍</span> الترجمة القصدية</div><div id="translation-content"></div></div></section>
+<section id="screen-protection" class="screen"><div class="card"><div class="card-title"><span class="icon">🛡️</span> الحماية الذاتية</div><div id="protection-content"></div></div></section>
+<section id="screen-particles" class="screen"><div class="card"><div class="card-title"><span class="icon">📖</span> الحروف المفردة</div><div id="particles-content"></div></div></section>
+<section id="screen-compare" class="screen"><div class="card"><div class="card-title"><span class="icon">⚖️</span> مقارنة تسلسلين</div><div class="compare-row"><input type="text" class="compare-input" id="cmp-a" value="حمد"><input type="text" class="compare-input" id="cmp-b" value="مدح"></div><div style="text-align:center;margin-top:12px;"><button class="btn-primary" id="compare-btn">قارن</button></div></div><div id="compare-output"></div></section>
+<section id="screen-history" class="screen"><div class="card"><div class="card-title"><span class="icon">📋</span> السجل <span style="margin-inline-start:auto;font-size:.75rem;color:var(--ink-muted);" id="history-count-label">0</span></div><div style="display:flex;gap:8px;"><button class="btn-secondary" id="history-clear-btn">🗑️ مسح</button><button class="btn-secondary" id="history-export-btn">📥 تصدير</button></div></div><div id="history-list-container"></div></section>
+<section id="screen-stats" class="screen"><div class="card"><div class="card-title"><span class="icon">🎯</span> توصيات</div><div id="recommend-content"></div></div><div class="card"><div class="card-title"><span class="icon">👤</span> إحصائياتي</div><div id="personal-stats-content"></div></div><div class="card"><div class="card-title"><span class="icon">🗺️</span> الخريطة الحرارية</div><div id="heatmap-content"></div></div><div class="card"><div class="card-title"><span class="icon">📅</span> تقويم النشاط</div><div id="calendar-content"></div></div><div class="card"><div class="card-title"><span class="icon">🌐</span> كرة الحروف</div><div id="sphere-container"><div class="sphere-hint">اسحب للتدوير</div></div></div></section>
+<section id="screen-rules" class="screen"><div class="card"><div class="card-title"><span class="icon">📜</span> القواعد التسع</div><ul id="rules-list" style="list-style:none;padding:0;"></ul></div><div class="card"><div class="card-title"><span class="icon">📖</span> منهج النقد الدلالي</div><div id="critique-rules"></div></div></section>
+</main>
+<footer class="footer"><div>اللغة الموحدة — v4.3.0</div><div style="margin-top:6px;">28 صوتًا · <span id="footer-seq-count">0</span> تسلسلًا · طبقات بنيوية · جدول شامل · سرد نيليّ</div></footer>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══ KS_DATA ═══ */
+const KS_DATA={'دب':{text:'د ـ ب : الدال اندفاع مقصود إلى أبعد مدى، والباء انبثاق الحركة من مكمنها.',lexicon:'الدّابّة: كل قاطعٍ لمسافةٍ.',quran:'(وخلق الله كلّ دابّةٍ من ماء)',source:'ج1 — الدال'},'حمد':{text:'ح ـ م ـ د : تعاظم الحركة واكتمالها ثم اندفاعها إلى هدفٍ مقصود.',lexicon:'حَمَدَ فلانًا: رضي فعله.',source:'ج1 — الحاء'},'مدح':{text:'م ـ د ـ ح : اكتمال الحركة بالميم واندفاعها بالدال وتعاظمها بالحاء.',lexicon:'مدحه: أثنى عليه.',source:'ج1 — الحاء'},'حد':{text:'ح ـ د : الحاء تعاظم، والدال اندفاعها إلى أقصى مدى.',lexicon:'الحَدّ: الحاجز الفاصل.',source:'ج1 — الحاء',concept:'الحدّ'},'حرد':{text:'ح ـ ر ـ د : تعاظم الحركة وتكرارها واندفاعها.',lexicon:'حرد فلان: ثقل الحمل عليه.',source:'ج1 — الحاء'},'دحر':{text:'د ـ ح ـ ر : اندفاع مقصود والحاء تعاظم والراء تكرار.',lexicon:'دحَرَه: دفعه وأبعده.',source:'ج1 — الراء'},'ضرب':{text:'ض ـ ر ـ ب : إذا انبثقت حركاتٌ بشكل ظاهر لم تكن معاينة قبل فهو ضرب.',quran:'(اضرب بعصاك الحجر)',source:'ج2 — الضاد'},'كتب':{text:'ك ـ ت ـ ب : الكّاف تكتّل، التاء اجتذاب حركات، الباء انبثاق الحركة.',quran:'(كتب عليكم القتال وهو كرهٌ لكم)',source:'ج1 — الكاف'},'خلق':{text:'خ ـ ل ـ ق : كبت جماح الحركة وتلاحم ثم اندفاعها.',quran:'(فتبارك الله أحسن الخالقين)',source:'ج2 — الخاء'},'علم':{text:'ع ـ ل ـ م : عمق وتمكّن + التصاق واتصال + تكامل.',source:'من تسلسل'},'نجم':{text:'ن ـ ج ـ م : إنشاء حركة جديدة + قيام بالذات + تكامل.',source:'الطور المهدوي'},'ظهر':{text:'ظ ـ هـ ـ ر : ظهور في المركز + تنبيه للنهاية + تكرار.',source:'ج2 — الظاء'},'فطر':{text:'ف ـ ط ـ ر : تفرّق + طي + تكرار.',quran:'(فاطر السماوات والأرض)',source:'ج2 — الطاء'}};
+
+/* ═══ CORE — 28 حرفًا ═══ */
+const CORE={'أ':{tier:'green',source:'ج1',movement:'المؤلّف للحركة والمنشأ لها',axes:{direction:0,cohesion:.85,intensity:.4,visibility:-.6,time:0},speed:.05,finalFactor:0.85},'ب':{tier:'green',source:'ج1',movement:'انبثاق بقوة بعيداً عن المركز',axes:{direction:.2,cohesion:.4,intensity:.2,visibility:.7,time:0},speed:.3,finalFactor:1.01},'ت':{tier:'green',source:'ج1',movement:'اجتذاب الحركة لأمثالها',axes:{direction:.3,cohesion:0,intensity:.4,visibility:.4,time:.2},speed:.5,finalFactor:1.00},'ث':{tier:'yellow',source:'ج2',movement:'تسكين الحركة للثبات والمقاومة',axes:{direction:-.2,cohesion:.6,intensity:.3,visibility:.2,time:.4},speed:.15,finalFactor:0.93},'ج':{tier:'yellow',source:'ج2',movement:'جعل الحركة قائمة بذاتها مستقلة',axes:{direction:.5,cohesion:.2,intensity:.4,visibility:.6,time:.3},speed:.35,finalFactor:0.95},'ح':{tier:'green',source:'ج1',movement:'تعاظم إلى حده الأقصى',axes:{direction:.4,cohesion:0,intensity:.95,visibility:.2,time:-.2},speed:.15,finalFactor:0.94},'خ':{tier:'yellow',source:'ج2',movement:'كبت جماح الحركة في مكانها وإخمادها',axes:{direction:-.4,cohesion:.6,intensity:-.3,visibility:-.5,time:-.2},speed:.1,finalFactor:0.90},'د':{tier:'green',source:'ج1',movement:'اندفاع مقصود إلى أبعد مدى',axes:{direction:.9,cohesion:0,intensity:.85,visibility:.6,time:.3},speed:.85,finalFactor:1.06},'ذ':{tier:'yellow',source:'ج2',movement:'تسكين الحركة وتذليلها مع استمرار الآثار',axes:{direction:.2,cohesion:.3,intensity:-.4,visibility:-.2,time:.6},speed:.25,finalFactor:0.92},'ر':{tier:'green',source:'ج1',movement:'ترتب الحركة بتكرار معين',axes:{direction:0,cohesion:.3,intensity:.5,visibility:0,time:.95},speed:.95,finalFactor:1.03},'ز':{tier:'yellow',source:'ج2',movement:'إزاحة الحركة بسرعة من غير تكرار',axes:{direction:.6,cohesion:-.5,intensity:.4,visibility:-.3,time:0},speed:.9,finalFactor:1.05},'س':{tier:'yellow',source:'ج2',movement:'انسلال الحركة خفية دون إثارة انتباه',axes:{direction:.5,cohesion:.2,intensity:.15,visibility:-.9,time:.5},speed:.6,finalFactor:1.00},'ش':{tier:'yellow',source:'ج2',movement:'تشعب الحركة إلى وجه آخر بشكل ظاهر',axes:{direction:.55,cohesion:-.3,intensity:.4,visibility:.7,time:.4},speed:.55,finalFactor:1.02},'ص':{tier:'yellow',source:'ج2',movement:'تحويل الحركة المستقرة إلى قابلة للتطور',axes:{direction:.4,cohesion:.3,intensity:.6,visibility:.2,time:.4},speed:.5,finalFactor:1.02},'ض':{tier:'yellow',source:'ج2',movement:'الإحاطة بالحركة وتوجيهها وقطع الطريق على الانحراف',axes:{direction:.7,cohesion:.5,intensity:.75,visibility:-.2,time:.2},speed:.55,finalFactor:1.04},'ط':{tier:'yellow',source:'ج2',movement:'طي الحركة بعيداً عن المركز باتجاه واحد',axes:{direction:.75,cohesion:-.4,intensity:.5,visibility:.3,time:.2},speed:.6,finalFactor:1.02},'ظ':{tier:'yellow',source:'ج2',movement:'ظهور الحركة واتضاحها في المركز',axes:{direction:.3,cohesion:.4,intensity:.5,visibility:.95,time:.2},speed:.4,finalFactor:1.00},'ع':{tier:'green',source:'ج1',movement:'اتضاح معالم الحركة المبهمة',axes:{direction:.5,cohesion:.5,intensity:.6,visibility:-.3,time:.2},speed:.45,finalFactor:0.99},'غ':{tier:'yellow',source:'ج2',movement:'إرجاع الحركة التي تريد الظهور إلى مكمنها',axes:{direction:-.3,cohesion:.3,intensity:-.2,visibility:-.95,time:.4},speed:.2,finalFactor:0.88},'ف':{tier:'green',source:'ج1',movement:'تفرّق الحركة إلى ما يفي كافة الاتجاهات',axes:{direction:.85,cohesion:-.85,intensity:.5,visibility:.6,time:.35},speed:.78,finalFactor:1.05},'ق':{tier:'yellow',source:'ج2',movement:'اندفاع الحركة بتدبير مقصود لهدف معلوم',axes:{direction:.85,cohesion:.2,intensity:.8,visibility:.4,time:.3},speed:.75,finalFactor:1.04},'ك':{tier:'green',source:'ج1',movement:'تكتل الحركة مع من يشبهها',axes:{direction:0,cohesion:.85,intensity:.3,visibility:.3,time:0},speed:.4,finalFactor:0.98},'ل':{tier:'green',source:'ج1',movement:'تلاحم ما يمكن أن يكون واحداً',axes:{direction:.3,cohesion:.7,intensity:.2,visibility:.3,time:0},speed:.4,finalFactor:0.98},'م':{tier:'green',source:'ج1',movement:'تكامل بإتمام ما ينقصها',axes:{direction:0,cohesion:.85,intensity:.3,visibility:.1,time:.1},speed:.35,finalFactor:0.97},'ن':{tier:'green',source:'ج1',movement:'إنشاء حركة جديدة مستمرة متطوّرة',axes:{direction:.35,cohesion:.4,intensity:.5,visibility:.4,time:.85},speed:.42,finalFactor:1.03},'هـ':{tier:'yellow',source:'ج2',movement:'التنبيه إلى نهاية الحركة أو إنهائها',axes:{direction:.3,cohesion:.4,intensity:.3,visibility:.5,time:-.8},speed:.5,finalFactor:0.94},'و':{tier:'green',source:'ج1',movement:'تموضع الحركة بعد تمامها',axes:{direction:.1,cohesion:.75,intensity:.2,visibility:.5,time:.15},speed:.08,finalFactor:0.82},'ي':{tier:'green',source:'ج1',movement:'ديمومة الحركة في الزمان',axes:{direction:0,cohesion:.3,intensity:0,visibility:.3,time:1},speed:1,finalFactor:0.96}};
+
+/* ═══ DIVINE_LEVELS — الطبقات الأربع ═══ */
+const DIVINE_LEVELS = {
+'أ':{movement:'المؤلّف للحركة، والمنشأ لها — المادّة الخام لكلّ صوت.',conceptual:'الألف ليس صوتًا يُنطق، بل هو المادة التي بها تُنطق الأصوات كلّها. وهو يجمع بين الواو (محور المكان) والياء (محور الزمان) في التأليف. وهو علّة كلّ حرف، إذ لا حرف إلّا ويستمدّ منه وجوده الصوتيّ.',modality:'إذا كان الألف هو المادّة الخام لكلّ صوت، وهو علّة كلّ حرف، وهو المؤلّف للحركة، فليس له نظير يقابله في المصوفة. وهو بلا حركة قبله، فكلّ حركة تبدأ منه.',divineLink:'«آلاء الله» — كما قال الإمام الرضا (ع). والآلاء اسم جامع، كما أنّ الألف مادّة جامعة.',synthesis:'الألف يجمع ثلاث وظائف بنيوية: ① المادّة الخام، ② العلّة الأولى، ③ المؤلّف الجامع. وهذا يطابق اسمًا إلهيًّا جامعًا واحدًا هو «آلاء الله».'},
+'ب':{movement:'انبثاق الحركة من مكمنها بقوة بعيدًا عن المركز.',conceptual:'الانبثاق من المكمن ينفي أزلية وقدم حركة الانبثاق، ويثبت أنّ الحركة الكلية لها بداية.',modality:'وصفه بالقوّة لأنّها ولادة حيثية وجودية من أخرى. ووصف التحرّك بأنّه «بعيدًا عن المركز» يفيد حركة الدائرة: لها بداية من نقطة، وليس لها نهاية. وهذا يكسبها حيثية الديمومة.',divineLink:'حركة الدائرة = ديمومة = بقاء. وهذا عين ما جاء عن أهل البيت (ع): الباء تمثّل «بقاء الله».',synthesis:'الباء تجمع: ① انبثاقًا من مكمن، ② بقوّة، ③ وبلا قيد (دائرية = ديمومة). والاسم الإلهيّ المطابق هو «الباقي».'},
+'د':{movement:'اندفاع مقصود إلى أبعد مدى.',conceptual:'الاندفاع يفيد أنّ الحركة لا تسكن، والمقصود يفيد أنّها ليست عبثية، و«إلى أبعد مدى» يفيد أنّ لها غاية لا تتوقّف عند حدّ.',modality:'القوّة في الاندفاع لأنّها متجهة بوجهة معينة لا تتشتت. والامتداد «إلى أبعد مدى» يفيد أنّ الغاية لا تنتهي في نقطة، بل هي امتداد دائم.',divineLink:'«الدين» — كما ورد في الرواية: «الدال دين الله». والدين الإلهي هو حركة غائية تدفع الخلق إلى أقصى كمالهم.',synthesis:'الدال تجمع: ① الدفع، ② المقصودية، ③ البُعد الأقصى. والاسم الإلهيّ المطابق هو «الدين / الديّان».'},
+'ت':{movement:'اجتذاب الحركة لأمثالها.',conceptual:'الاجتذاب يفيد الحركة العائدة — كلّ ما يبدأ يميل للرجوع إلى ما يشبهه.',modality:'القوّة في الاجتذاب هي في إلفة المتماثلين.',divineLink:'«التوّاب» — الرجوع المتكرّر إلى الله.',synthesis:'التاء تجمع: اجتذابًا، وإلفةً، ورجوعًا. والاسم المطابق: التوّاب.'},
+'ث':{movement:'تسكين الحركة للثبات والمقاومة وإبطاؤها.',conceptual:'التسكين يفيد الثبات في مقابل التذبذب.',modality:'إبطاء الحركة يكسبها صلابة في المقاومة.',divineLink:'«الثواب» و«الثابت» — ثبات الأجر وثبات الوجود.',synthesis:'الثاء تجمع: تسكينًا، وثباتًا، وصلابة. والاسم: الثواب.'},
+'ج':{movement:'جعل الحركة قائمة بذاتها مستقلة.',conceptual:'الاستقلال يفيد الوجود الذاتيّ الذي لا يحتاج إلى غيره.',modality:'القيام بالذات قوّة في الاستقلال.',divineLink:'«الجمال» و«الجلال» — قيام الجلال بالذات.',synthesis:'الجيم تجمع: استقلالًا، وجلالًا، وجمالًا. والاسم: الجليل.'},
+'ح':{movement:'تعاظم إلى حده الأقصى.',conceptual:'التعاظم يفيد نموًّا لا يتوقف عند حدّ.',modality:'القوّة في التعاظم هي في الاحتواء.',divineLink:'«الحلم» و«الحقّ» و«الحياة» — الحلم يحتوي، والحقّ يعلو، والحياة تدوم.',synthesis:'الحاء تجمع: تعاظمًا، وحلمًا، وحقًّا. والاسم: الحليم.'},
+'خ':{movement:'كبت جماح الحركة في مكانها وإخمادها.',conceptual:'الكبت يفيد إخماد الشرّ في مكمّنه.',modality:'القوّة في الكبت هي في العلم بالخفيّ.',divineLink:'«الخبير» — يعلم ما خفي وما يُكبت.',synthesis:'الخاء تجمع: كبتًا، وعلمًا، وإخمادًا. والاسم: الخبير.'},
+'ذ':{movement:'تسكين الحركة وتذليلها مع استمرار الآثار.',conceptual:'التذليل يفيد الخضوع مع بقاء الأثر.',modality:'القوّة في التذليل هي في الجلال.',divineLink:'«ذو الجلال والإكرام» — الجلال يُذلّل ما سواه.',synthesis:'الذال تجمع: تذليلًا، وجلالًا، وأثرًا. والاسم: ذو الجلال.'},
+'ر':{movement:'ترتب الحركة بتكرار معين.',conceptual:'الترتيب يفيد النظام، والتكرار يفيد الاستمرار.',modality:'القوّة في الترتيب هي في الرحمة المنظّمة.',divineLink:'«الرؤوف الرحيم» — الرحمة بنظام متكرّر.',synthesis:'الراء تجمع: ترتيبًا، وتكرارًا، ورحمة. والاسم: الرحيم.'},
+'ز':{movement:'إزاحة الحركة بسرعة من غير تكرار مرة واحدة.',conceptual:'الإزاحة المفاجئة تفيد التحوّل.',modality:'القوّة في الإزاحة هي في التزيين المُسبق.',divineLink:'«زين المعبودين» و«زلازل القيامة» — التزيين قبل التحوّل.',synthesis:'الزاي تجمع: إزاحة، وتزيينًا، وتحوّلًا. والاسم: زين المعبودين.'},
+'س':{movement:'انسلال الحركة خفية دون إثارة انتباه.',conceptual:'الانسلال يفيد العلم الخفيّ الذي يحيط بكلّ شيء.',modality:'القوّة في الانسلال هي في الإحاطة.',divineLink:'«السناء» و«السميع البصير» — علم ينسلّ إلى كلّ شيء.',synthesis:'السين تجمع: انسلالًا، وسناءً، وسمعًا وبصرًا. والاسم: السميع البصير.'},
+'ش':{movement:'تشعب الحركة إلى وجه آخر بشكل ظاهر.',conceptual:'التشعّب يفيد تعدّد الموجودات الصادرة عن مشيئة واحدة.',modality:'القوّة في التشعّب هي في الإرادة الجامعة.',divineLink:'«المشيئة» و«الشاكر» — المشيئة تتشعّب، والشكر يجزي.',synthesis:'الشين تجمع: تشعّبًا، ومشيئة، وشكرًا. والاسم: الشاكر.'},
+'ص':{movement:'تحويل الحركة المستقرة إلى قابلة للتطور.',conceptual:'التحويل يفيد إمكانية الصيرورة.',modality:'القوّة في التحويل هي في الصدق الذي يحقّق.',divineLink:'«الصادق» في وعده ووعيده.',synthesis:'الصاد تجمع: تحويلًا، وتشكّلًا، وصدقًا. والاسم: الصادق.'},
+'ض':{movement:'الإحاطة بالحركة وتوجيهها وقطع الطريق على الانحراف.',conceptual:'الإحاطة تفيد الشمول، والتوجيه يفيد الهداية.',modality:'القوّة في الإحاطة هي في النفع والضرّ.',divineLink:'«الضارّ النافع» — يحيط بكلّ شيء ويوجّه.',synthesis:'الضاد تجمع: إحاطة، وتوجيهًا، وهداية. والاسم: الضارّ النافع.'},
+'ط':{movement:'طي الحركة بعيداً عن المركز باتجاه واحد.',conceptual:'الطيّ يفيد التطهير بإزالة ما لا يليق.',modality:'القوّة في الطيّ هي في الطهارة.',divineLink:'«الطاهر المطهّر» — يطهّر القلوب.',synthesis:'الطاء تجمع: طيًّا، وتطهيرًا، وطوبى. والاسم: الطاهر.'},
+'ظ':{movement:'ظهور الحركة واتضاحها في المركز.',conceptual:'الظهور يفيد الإعلان والاتضاح.',modality:'القوّة في الظهور هي في الإظهار.',divineLink:'«الظاهر» و«المظهر لآياته» — يظهر في كلّ شيء.',synthesis:'الظاء تجمع: ظهورًا، وإظهارًا، واتضاحًا. والاسم: الظاهر.'},
+'ع':{movement:'اتضاح معالم الحركة المبهمة.',conceptual:'الاتضاح يفيد الكشف والإظهار.',modality:'القوّة في الاتضاح هي في العلم.',divineLink:'«العالم» — يعلم ويُظهر.',synthesis:'العين تجمع: اتضاحًا، وعلمًا، وكشفًا. والاسم: العالم.'},
+'غ':{movement:'إرجاع الحركة التي تريد الظهور إلى مكمنها.',conceptual:'الإرجاع يفيد الإغاثة لمن استغاث.',modality:'القوّة في الإرجاع هي في الغياث.',divineLink:'«غياث المستغيثين» — يجيب المضطرّ.',synthesis:'الغين تجمع: إرجاعًا، وإغاثة، وغياثًا. والاسم: الغياث.'},
+'ف':{movement:'تفرّق الحركة إلى ما يفي كافة الاتجاهات.',conceptual:'التفرّق يفيد الانفتاح والحياة.',modality:'القوّة في التفرّق هي في الفلق الذي يُحيي.',divineLink:'«فالق الحبّ والنوى» — يفتح الحياة من الجماد.',synthesis:'الفاء تجمع: تفرّقًا، وفلقًا، وانفتاحًا. والاسم: الفالق.'},
+'ق':{movement:'اندفاع الحركة بتدبير مقصود لهدف معلوم.',conceptual:'التدبير يفيد القدرة الغائية.',modality:'القوّة في التدبير هي في القدرة على كلّ شيء.',divineLink:'«القادر على جميع خلقه» و«القرآن» الجامع.',synthesis:'القاف تجمع: اندفاعًا، وتدبيرًا، وقدرة. والاسم: القادر.'},
+'ك':{movement:'تكتل الحركة مع من يشبهها.',conceptual:'التكتّل يفيد جمع المتشابهات.',modality:'القوّة في التكتّل هي في الكفاية.',divineLink:'«الكافي» — يكفي ولا يحتاج.',synthesis:'الكاف تجمع: تكتّلًا، وكفاية، واستقلالًا. والاسم: الكافي.'},
+'ل':{movement:'تلاحم ما يمكن أن يكون واحداً.',conceptual:'التلاحم يفيد الوحدة والجمع.',modality:'القوّة في التلاحم هي في اللطف.',divineLink:'«اللطيف بعباده» — يلتحم بلطف.',synthesis:'اللام تجمع: تلاحمًا، ولطفًا، ووحدة. والاسم: اللطيف.'},
+'م':{movement:'تكامل بإتمام ما ينقصها.',conceptual:'التكامل يفيد التمام.',modality:'القوّة في التكامل هي في الملك.',divineLink:'«مالك الملك» — يكمل ويتمّم.',synthesis:'الميم تجمع: تكاملًا، وإتمامًا، وملكًا. والاسم: المالك.'},
+'ن':{movement:'إنشاء حركة جديدة مستمرة متطوّرة.',conceptual:'الإنشاء يفيد الإبداع المستمر.',modality:'القوّة في الإنشاء هي في النور.',divineLink:'«النور» و«النوال» — يُنشئ البصر والعطاء.',synthesis:'النون تجمع: إنشاءً، ونورًا، وعطاءً. والاسم: النور.'},
+'و':{movement:'تموضع الحركة بعد تمامها.',conceptual:'التموضع يفيد الاستقرار بعد الحركة.',modality:'القوّة في التموضع هي في الوحدانية.',divineLink:'«الواحد الصمد» — التفرّد المطلق.',synthesis:'الواو تجمع: تموضعًا، ووحدة، وتفرّدًا. والاسم: الواحد.'},
+'هـ':{movement:'التنبيه إلى نهاية الحركة أو إنهائها.',conceptual:'التنبيه يفيد الإرشاد إلى المصير.',modality:'القوّة في التنبيه هي في الهداية.',divineLink:'«الهادي» — ينبّه الخلق.',synthesis:'الهاء تجمع: تنبيهًا، وهداية، وإرشادًا. والاسم: الهادي.'},
+'ي':{movement:'ديمومة الحركة في الزمان.',conceptual:'الديمومة تفيد الاستمرار بلا انقطاع.',modality:'القوّة في الديمومة هي في البسط.',divineLink:'«يد الله المبسوطة» — البسط الدائم.',synthesis:'الياء تجمع: ديمومةً، وبسطًا، واستمرارًا. والاسم: يد الله.'}
+};
+
+/* ═══ DIVINE_ASPECTS ═══ */
+const DIVINE_ASPECTS={'أ':{aspects:[{label:'المبدأ',text:'آلاء الله — المنشأ والبدء.'},{label:'المادّة الجامعة',text:'الألف مادّة خام لكلّ صوت وعلّة كلّ حرف.'}],unified:'آلاء الله — المعنى الجامع لكلّ الأسماء الحسنى.'},'ب':{aspects:[{label:'البهجة',text:'الباء بهجة الله — انبثاق.'},{label:'البقاء',text:'الباقي بعد فناء خلقه — ديمومة.'}],unified:'البهجة الظاهرة والبقاء الباطن — انبثاق وديمومة.'},'د':{aspects:[{label:'الدين',text:'دال دين الله — نظام غائيّ.'},{label:'الديّان',text:'الديّان يوم الدين — جزاء.'}],unified:'الدين يدفع، والديّان يجزي.'}};
+Object.keys(CORE).forEach(ch=>{if(!DIVINE_ASPECTS[ch]){DIVINE_ASPECTS[ch]={aspects:[{label:'حيثية الحرف',text:'لا توجد رواية مفصّلة لهذا الحرف في القاعدة الحالية.'}],unified:'قابل للتوسعة عند إضافة الروايات.'}}});
+
+/* ═══ LETTER_ATTRS — جدول الحروف الشامل (22 حقلًا × 28) ═══ */
+const LETTER_ATTRS = {
+'أ':{n:1,abjad:1,ali:'الله الذي لا اله الا هو الحي القيوم',reza:'آلاء الله',degree:'مراتب',zodiac:'الحمل',mansion:'الشرطان',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'ناري',ayqaghVal:9,planet:'لاهوتية',weight:'خفيف',beauty:'جلالي',fortune:'سعد',speech:'صامت',healing:'شافي',subjugation:'تسخير',notes:''},
+'ب':{n:2,abjad:2,ali:'باق بعد فناء خلقه',reza:'بهجة الله',degree:'مراتب',zodiac:'الثور',mansion:'البطين',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'ناري',ayqaghVal:9,planet:'العرش',weight:'ثقيل',beauty:'جلالي',fortune:'نحس',speech:'ناطق',healing:'شافي',subjugation:'○',notes:''},
+'ت':{n:3,abjad:400,ali:'تواب يقبل التوبة عن عباده',reza:'تمام الأمر لقائم آل محمد',degree:'روابع',zodiac:'الجدي',mansion:'سعد الذابح',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'ترابي',ayqaghVal:16,planet:'العرش',weight:'ثقيل',beauty:'مشترك',fortune:'سعد',speech:'ناطق',healing:'شافي',subjugation:'تسخير',notes:''},
+'ث':{n:4,abjad:500,ali:'الثابت الكائن يثبت الله الذين آمنوا بالقول الثابت',reza:'ثواب المؤمنين على أعمالهم الصالحة',degree:'روابع',zodiac:'الدلو',mansion:'سعد بلع',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'العرش',weight:'خفيف',beauty:'مشترك',fortune:'سعد',speech:'ناطق',healing:'شافي',subjugation:'تسخير',notes:''},
+'ج':{n:5,abjad:3,ali:'جل ثناؤه وتقدست أسماؤه',reza:'جمال الله وجلاله',degree:'مراتب',zodiac:'الجوزاء',mansion:'الثريا',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'ناري',ayqaghVal:9,planet:'الكرسي',weight:'خفيف',beauty:'مشترك',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'○',notes:''},
+'ح':{n:6,abjad:8,ali:'حق حي حليم',reza:'حلم الله عن المذنبين',degree:'درج',zodiac:'العقرب',mansion:'النثرة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'الكرسي',weight:'ثقيل',beauty:'جمالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'تسخير',notes:''},
+'خ':{n:7,abjad:600,ali:'خبير بما يعمل العباد',reza:'خمول ذكر أهل المعاصي عند الله',degree:'روابع',zodiac:'الحوت',mansion:'سعد السعود',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'ناري',ayqaghVal:9,planet:'الكرسي',weight:'ثقيل',beauty:'جمالي',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'د':{n:8,abjad:4,ali:'ديان يوم الدين',reza:'دين الله',degree:'مراتب',zodiac:'السرطان',mansion:'الدبران',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'مائي',ayqaghVal:15,planet:'زحل',weight:'ثقيل',beauty:'جمالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'تسخير',notes:''},
+'ذ':{n:9,abjad:700,ali:'ذو الجلال والإكرام',reza:'من ذي الجلال',degree:'خوامس',zodiac:'الحمل',mansion:'سعد الأخبية',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'ترابي',ayqaghVal:16,planet:'زحل',weight:'خفيف',beauty:'جلالي',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'ر':{n:10,abjad:200,ali:'رؤوف بعباده',reza:'من الرؤوف الرحيم',degree:'ثوالث',zodiac:'العقرب',mansion:'النعائم',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'ناري',ayqaghVal:9,planet:'المشتري',weight:'ثقيل',beauty:'جمالي',fortune:'نحس',speech:'صامت',healing:'○',subjugation:'تسخير',notes:''},
+'ز':{n:11,abjad:7,ali:'زين المعبودين',reza:'زلازل القيامة',degree:'درج',zodiac:'الميزان',mansion:'الذراع',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'المشتري',weight:'خفيف',beauty:'مشترك',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'○',notes:''},
+'س':{n:12,abjad:90,ali:'سميع بصير',reza:'سناء الله',degree:'ثواني',zodiac:'السرطان',mansion:'الغفر',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'ناري',ayqaghVal:9,planet:'المريخ',weight:'خفيف',beauty:'مشترك',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'تسخير',notes:''},
+'ش':{n:13,abjad:300,ali:'شاكر لعباده المؤمنين',reza:'شاء الله ما شاء وأراد ما أراد وما تشاءون إلا أن يشاء الله',degree:'روابع',zodiac:'القوس',mansion:'البلدة',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'مائي',ayqaghVal:15,planet:'المريخ',weight:'خفيف',beauty:'جلالي',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'ص':{n:14,abjad:60,ali:'صادق في وعده ووعيده',reza:'من صادق الوعد في حمل الناس على الصراط وحبس الظالمين عند المرصاد',degree:'ثوالث',zodiac:'الجوزاء',mansion:'القلب',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'الشمس',weight:'ثقيل',beauty:'مشترك',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'○',notes:''},
+'ض':{n:15,abjad:800,ali:'الضار النافع',reza:'ضل من خالف محمدًا وآل محمد',degree:'خوامس',zodiac:'السنبلة',mansion:'الفرع المقدم',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'ناري',ayqaghVal:9,planet:'الشمس',weight:'خفيف',beauty:'مشترك',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'ط':{n:16,abjad:9,ali:'الطاهر المطهر',reza:'طوبى للمؤمنين وحسن مآب',degree:'دقائق',zodiac:'القوس',mansion:'الطرفة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'ترابي',ayqaghVal:16,planet:'الزهرة',weight:'خفيف',beauty:'جلالي',fortune:'سعد',speech:'صامت',healing:'شافي',subjugation:'○',notes:''},
+'ظ':{n:17,abjad:900,ali:'الظاهر المظهر لآياته',reza:'ظن المؤمنين به خيرًا وظن الكافرين به سوءًا',degree:'خوامس',zodiac:'الثور',mansion:'الفرع المؤخر',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'مائي',ayqaghVal:15,planet:'الزهرة',weight:'ثقيل',beauty:'مشترك',fortune:'نحس',speech:'ناطق',healing:'شافي',subjugation:'تسخير',notes:''},
+'ع':{n:18,abjad:70,ali:'عالم بعباده',reza:'من العالم',degree:'ثواني',zodiac:'السرطان',mansion:'الزباني',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'مائي',ayqaghVal:15,planet:'عطارد',weight:'ثقيل',beauty:'جمالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'○',notes:''},
+'غ':{n:19,abjad:1000,ali:'غياث المستغيثين',reza:'من الغي',degree:'خوامس',zodiac:'الجوزاء',mansion:'بطن الحوت',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'ترابي',ayqaghVal:16,planet:'عطارد',weight:'ثقيل',beauty:'جمالي',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'ف':{n:20,abjad:80,ali:'فالق الحب والنوى',reza:'فوج من أفواج النار',degree:'ثوالث',zodiac:'الأسد',mansion:'الإكليل',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'مائي',ayqaghVal:15,planet:'القمر',weight:'خفيف',beauty:'جلالي',fortune:'نحس',speech:'ناطق',healing:'شافي',subjugation:'تسخير',notes:''},
+'ق':{n:21,abjad:100,ali:'قادر على جميع خلقه',reza:'قرآن على الله جمعه وقرآنه',degree:'ثوالث',zodiac:'الميزان',mansion:'الشولة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'مائي',ayqaghVal:15,planet:'القمر',weight:'خفيف',beauty:'مشترك',fortune:'سعد',speech:'ناطق',healing:'○',subjugation:'تسخير',notes:''},
+'ك':{n:22,abjad:20,ali:'كافي الذي لم يكن له كفؤًا أحد ولم يلد ولم يولد',reza:'من الكافي',degree:'دقائق',zodiac:'الدلو',mansion:'الخرثان',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'جنوب',abjadVal:15,tabAbjad:'مائي',tabAyqagh:'مائي',ayqaghVal:15,planet:'النار',weight:'خفيف',beauty:'مشترك',fortune:'سعد',speech:'صامت',healing:'شافي',subjugation:'تسخير',notes:''},
+'ل':{n:23,abjad:30,ali:'لطيف بعباده',reza:'لغو الكافرين في افترائهم على الله الكذب',degree:'دقائق',zodiac:'الحوت',mansion:'الصرفة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'غربي',abjadVal:16,tabAbjad:'ترابي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'الهواء',weight:'ثقيل',beauty:'جمالي',fortune:'سعد',speech:'صامت',healing:'شافي',subjugation:'○',notes:''},
+'م':{n:24,abjad:40,ali:'مالك الملك',reza:'ملك الله يوم لا مالك غيره',degree:'ثواني',zodiac:'الحمل',mansion:'العواء',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'ترابي',ayqaghVal:16,planet:'الحيوان',weight:'خفيف',beauty:'جلالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'تسخير',notes:''},
+'ن':{n:25,abjad:50,ali:'نور السماوات والأرض من نور عرشه',reza:'نوال الله للمؤمنين ونكاله للكافرين',degree:'ثواني',zodiac:'الثور',mansion:'السماك',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'ترابي',ayqaghVal:16,planet:'النبات',weight:'ثقيل',beauty:'جمالي',fortune:'نحس',speech:'ناطق',healing:'○',subjugation:'○',notes:''},
+'هـ':{n:26,abjad:5,ali:'واحد صمد لم يلد ولم يولد',reza:'ويل لمن عصى الله',degree:'درج',zodiac:'الأسد',mansion:'الهقعة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شرقي',abjadVal:9,tabAbjad:'ناري',tabAyqagh:'هوائي',ayqaghVal:12,planet:'المعدن',weight:'خفيف',beauty:'جلالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'○',notes:''},
+'و':{n:27,abjad:6,ali:'هادي لخلقه',reza:'هان على الله من عصاه',degree:'درج',zodiac:'السنبلة',mansion:'الهنعة',polarity:'سفلي',light:'ظلماني',gender:'مؤنث',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'ترابي',ayqaghVal:16,planet:'الماء',weight:'ثقيل',beauty:'جلالي',fortune:'سعد',speech:'صامت',healing:'○',subjugation:'○',notes:''},
+'ي':{n:28,abjad:10,ali:'يد الله باسطة على خلقه',reza:'يد الله فوق خلقه باسطة بالرزق',degree:'دقائق',zodiac:'الجدي',mansion:'الجبهة',polarity:'علوي',light:'نوراني',gender:'مذكر',direction:'شمال',abjadVal:12,tabAbjad:'هوائي',tabAyqagh:'هوائي',ayqaghVal:12,planet:'التراب',weight:'ثقيل',beauty:'جمالي',fortune:'سعد',speech:'ناطق',healing:'شافي',subjugation:'○',notes:''}
+};
+
+/* ═══ VOCAL_ARTICULATION ═══ */
+const VOCAL_ARTICULATION={'أ':{name:'الألف',place:'الجوف',nature:'مدّية',voice:'مجهور',strength:'رخو',group:'مستقلّة',note:'هواء الفم.'},'ب':{name:'الباء',place:'الشفتان',nature:'شديدة',voice:'مجهور',strength:'شديد',group:'الألف',note:'انطباق الشفتين.'},'ت':{name:'التاء',place:'طرف اللسان مع الثنايا',nature:'شديدة',voice:'مهموس',strength:'شديد',group:'الألف',note:'انطباق مع همس.'},'ح':{name:'الحاء',place:'وسط الحلق',nature:'رخوة',voice:'مهموس',strength:'رخو',group:'الألف',note:'همس حلق.'},'د':{name:'الدال',place:'طرف اللسان مع الثنايا',nature:'شديدة',voice:'مجهور',strength:'شديد',group:'اللام',note:'انطباق مع جهر.'},'ر':{name:'الراء',place:'طرف اللسان',nature:'متكرّرة',voice:'مجهور',strength:'بينيّ',group:'الألف',note:'اهتزاز.'},'ض':{name:'الضاد',place:'حافة اللسان مع الأضراس',nature:'رخوة',voice:'مجهور',strength:'رخو',group:'الدال',note:'استطالة.'},'ظ':{name:'الظاء',place:'طرف اللسان مع الثنايا',nature:'رخوة',voice:'مجهور',strength:'رخو',group:'الألف',note:'تفخيم.'},'ع':{name:'العين',place:'وسط الحلق',nature:'رخوة',voice:'مجهور',strength:'بينيّ',group:'النون',note:'جهر حلق.'},'ف':{name:'الفاء',place:'الشفة مع الثنايا',nature:'رخوة',voice:'مهموس',strength:'رخو',group:'الألف',note:'همس.'},'ق':{name:'القاف',place:'أقصى اللسان',nature:'شديدة',voice:'مهموس',strength:'شديد',group:'الفاء',note:'انطباق خلفي.'},'ك':{name:'الكاف',place:'أقصى اللسان',nature:'شديدة',voice:'مهموس',strength:'شديد',group:'الفاء',note:'همس.'},'ل':{name:'اللام',place:'طرف اللسان',nature:'متوسّطة',voice:'مجهور',strength:'بينيّ',group:'الميم',note:'انطباق.'},'م':{name:'الميم',place:'الشفتان',nature:'غنّية',voice:'مجهور',strength:'بينيّ',group:'مستقلّة',note:'غنّة.'},'ن':{name:'النون',place:'طرف اللسان',nature:'غنّية',voice:'مجهور',strength:'بينيّ',group:'مستقلّة',note:'غنّة.'},'هـ':{name:'الهاء',place:'أقصى الحلق',nature:'رخوة',voice:'مهموس',strength:'رخو',group:'الألف',note:'همس.'},'و':{name:'الواو',place:'الشفتان',nature:'مدّية',voice:'مجهور',strength:'رخو',group:'مستقلّة',note:'مدّ.'},'ي':{name:'الياء',place:'وسط اللسان',nature:'مدّية',voice:'مجهور',strength:'رخو',group:'الألف',note:'مدّ.'}};
+['ث','ج','خ','ذ','ز','س','ش','ص','ط','غ'].forEach(ch=>{VOCAL_ARTICULATION[ch]={name:ch,place:'—',nature:'—',voice:'—',strength:'—',group:'—',note:'قابل للتوسعة.'}});
+
+/* ═══ QURANIC_OCCURRENCES ═══ */
+const QURANIC_OCCURRENCES={'حد':[{ref:'البقرة ١٨٧',text:'...حتى يَتَبَيَّنَ لَكُمُ الْخَيْطُ الأَبْيَضُ مِنَ الْخَيْطِ الأَسْوَدِ...'}],'حمد':[{ref:'الفاتحة ٢',text:'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ'}],'ضرب':[{ref:'البقرة ٦٠',text:'...فَقُلْنَا اضْرِب بِّعَصَاكَ الْحَجَرَ...'}],'كتب':{ref:'البقرة ١٨٣',text:'كُتِبَ عَلَيْكُمُ الصِّيَامُ...'},'خلق':{ref:'البقرة ٢١',text:'...اعْبُدُوا رَبَّكُمُ الَّذِي خَلَقَكُمْ...'},'علم':{ref:'العلق ٥',text:'عَلَّمَ الإِنسَانَ مَا لَمْ يَعْلَمْ'}};
+
+/* ═══ QURAN_LIFE_SIGNS — 15 قرينة حيوية (مقياس مشاركة الآية) ═══ */
+const QURAN_LIFE_SIGNS = [
+  {word:'ماء', type:'صريح', source:'نصّ الرواسي'},
+  {word:'رزق', type:'صريح', source:'نصّ الرواسي'},
+  {word:'نهر', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'ثمر', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'بركة', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'إنبات', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'إماتة', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'إنزال', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'حياة', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'موت', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'زرع', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'شجر', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'نخل', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'ثمرة', type:'مستنبط', source:'دلالة الحيوية'},
+  {word:'نعمة', type:'مستنبط', source:'دلالة الحيوية'}
+];
+const QURAN_LIFE_SIGNS_EXCLUDED = ['أرض','سماء','خلق'];
+
+/* ═══ QURAN_LEXICON — بيانات القرآن للألفاظ الموثّقة ═══ */
+const QURAN_LEXICON = {
+  'رواسي': {
+    resources:9, shapes:'رَوَٰسِىَ (٩)', irab:'فتحة (٩)',
+    weight:'فَعَل (ثلاثي)', root:'ر ـ و ـ س ـ ي',
+    couplings:[{word:'جعل',count:9},{word:'تميد',count:3},{word:'الق',count:2}],
+    negations:['احي','موت','نبات','ماء'],
+    lifeSigns:['نهر','إنبات','ماء','بركة','إماتة','إنزال','ثمر'],
+    lift:624, verses:['13:3','15:19','16:15','21:31','27:61','31:10','41:10','50:7','77:27'],
+    counterpart:'الجبال'
+  },
+  'حد': {
+    resources:3, shapes:'حَدّ (٣)', irab:'فتحة (٣)',
+    weight:'فَعْل (ثلاثي)', root:'ح ـ د',
+    couplings:[{word:'لا',count:5}], negations:[], lifeSigns:[],
+    lift:0, verses:['البقرة ١٨٧','الرعد ٣٨']
+  }
+};
+
+/* ═══ FORBIDDEN — الكلمات المحظورة (8) ═══ */
+const FORBIDDEN_WORDS = [
+  {pattern:'يعني', reason:'رأي'},
+  {pattern:'المقصود', reason:'رأي'},
+  {pattern:'المراد', reason:'رأي'},
+  {pattern:'قطعًا', reason:'جزم'},
+  {pattern:'قطعاً', reason:'جزم'},
+  {pattern:'لا شك', reason:'جزم'},
+  {pattern:'بالتأكيد', reason:'جزم'},
+  {pattern:'يتعيّن', reason:'جزم'},
+  {pattern:'مثلما', reason:'تشبيه'}
+];
+
+/* ═══ MANIFESTATIONS / SPACETIME / DOORS / GROUPS / NUMBERS / APPARATUS ═══ */
+const MANIFESTATIONS={'ء':{name:'الهمزة',role:'نقطة الأصل',description:'أول حركة ممكنة.',color:'#8B5CF6'},'آ':{name:'الألف الممدود',role:'الزمكان المتكامل',description:'يتضمّن الواو والياء.',color:'#C9A961'},'و':{name:'الواو',role:'محور المكان',description:'تثبّت الحركة.',color:'#2563EB'},'ي':{name:'الياء',role:'محور الزمان',description:'تُبقي الحركة.',color:'#10B981'}};
+const SPACETIME_MARKERS={'َ':{name:'الفتحة',symbol:'ءَ',meaning:'زمكان',effect:'حركة زمكانية',color:'#C9A961'},'ُ':{name:'الضمة',symbol:'ءُ',meaning:'مكان',effect:'حركة ذاتية',color:'#2563EB'},'ِ':{name:'الكسرة',symbol:'ءِ',meaning:'زمان',effect:'حركة داخلية',color:'#10B981'},'ْ':{name:'السكون',symbol:'—',meaning:'قطع',effect:'توقف',color:'#6B7280'}};
+const SIX_DOORS=[{id:1,past:'فَعَلَ',present:'يَفْعُلُ',example:'نَصَرَ — يَنْصُرُ',centerPast:'فتحة',centerPresent:'ضمة',note:'الحركة خارجة'},{id:2,past:'فَعَلَ',present:'يَفْعِلُ',example:'ضَرَبَ — يَضْرِبُ',centerPast:'فتحة',centerPresent:'كسرة',note:'الحركة خارجة'},{id:3,past:'فَعَلَ',present:'يَفْعَلُ',example:'فَتَحَ — يَفْتَحُ',centerPast:'فتحة',centerPresent:'فتحة',note:'قد تستمر'},{id:4,past:'فَعُلَ',present:'يَفْعُلُ',example:'شَرُفَ — يَشْرُفُ',centerPast:'ضمة',centerPresent:'ضمة',note:'ذاتية'},{id:5,past:'فَعِلَ',present:'يَفْعَلُ',example:'عَلِمَ — يَعْلَمُ',centerPast:'كسرة',centerPresent:'فتحة',note:'داخلة'},{id:6,past:'فَعِلَ',present:'يَفْعِلُ',example:'حَسِبَ — يَحْسِبُ',centerPast:'كسرة',centerPresent:'كسرة',note:'داخلة مستمرّة'}];
+const SEVEN_GROUPS=[{n:1,name:'مجموعة الألف',count:12,letters:['ب','ت','ث','ح','خ','ر','ز','ي','هـ','ط','ظ','ف'],desc:'سمّت نفسها بحرف الألف'},{n:2,name:'مجموعة الدال',count:2,letters:['ص','ض'],desc:'استعملت الدال'},{n:3,name:'مجموعة النون',count:4,letters:['س','ش','ع','غ'],desc:'تسمّت بحرف النون'},{n:4,name:'مجموعة اللام',count:2,letters:['د','ذ'],desc:'حركة اللام'},{n:5,name:'مجموعة الفاء',count:2,letters:['ق','ك'],desc:'حرف الفاء'},{n:6,name:'مجموعة الميم',count:2,letters:['ج','ل'],desc:'حركة الميم'},{n:7,name:'المستقلّة',count:3,letters:['ن','و','م'],desc:'تسمّت ذاتياً'}];
+const NUMERICAL_RELATIONS=[{n:3,meaning:'مراكز اللسان',ref:'آلة النطق'},{n:5,meaning:'المراكز الكلية',ref:'آلة النطق'},{n:7,meaning:'احتمالات اللسان',ref:'آلة النطق'},{n:4,meaning:'مظاهر الألف',ref:'الألف'},{n:12,meaning:'التغيّرات الصوتية',ref:'الصوت'},{n:24,meaning:'الأصوات الأصلية',ref:'الصوت'},{n:28,meaning:'العدد الكلي',ref:'الصوت'},{n:8,meaning:'احتمالات اللسان',ref:'آلة النطق'},{n:15,meaning:'الأوزان',ref:'الاشتقاق'}];
+const VOCAL_APPARATUS={centers:[{id:1,name:'الشفتان',role:'مركز واحد',axis:'المكان'},{id:2,name:'الأسنان',role:'مركز واحد',axis:'الزمان'},{id:3,name:'اللسان',role:'ثلاثة مراكز',axis:'الصوت'}],impossible:'تحرّك المراكز الثلاثة معًا',totalPossible:32,actualPossible:28,note:'الأصوات الفعلية = 28.'};
+const INTENTIONAL_TRANSLATIONS=[{ar:'بند',en:'Band',note:'قاطع الطريق.'},{ar:'حرد',en:'Hard',note:'ح→ه.'},{ar:'دور',en:'Door',note:'نفس التسلسل.'},{ar:'you',en:'you',note:'ي+و.'},{ar:'less',en:'less',note:'يعمل عمل ليس.'}];
+const SELF_PROTECTION={desc:'التسلسل يُبقي على أثرٍ من حركته الأصلية.',mechanisms:['تضادّ حركي','تنافر وتجاذب','مرونة الاستعمال','شبكة العلاقات']};
+const UNIFIED_PARTICLES=[{word:'لا',meaning:'انتفاء تكامل الحركة',evidence:'لا إله إلا الله'},{word:'لم',meaning:'انتفاء الحركة اللاحقة',evidence:'لم يأتِ'},{word:'لن',meaning:'انتفاء المستقبلية',evidence:'لن يأتِ'},{word:'ليس',meaning:'إخفاء عن جهة',evidence:'فليس له اليوم'},{word:'كي',meaning:'تكوين لغاية',evidence:'كي تقرّ'},{word:'مع',meaning:'علاقة ترابطية',evidence:'مع العسر يسراً'},{word:'هو',meaning:'الهاء تنبيه + الواو غائب',evidence:'قل هو الله أحد'},{word:'ثم',meaning:'تراخٍ',evidence:'من تراب ثم من نطفة'}];
+const LETTER_CONTRASTS=[{pair:['د','ق'],title:'الدال والقاف',note:'الدال: الاتجاه غير مهم. القاف: الغاية محددة.',a:'الدفع معلوم والوجهة مجهولة',b:'الدفع مجهول والوجهة معلومة'},{pair:['و','ي'],title:'الواو والياء',note:'الياء: ديمومة. الواو: تموضع.',a:'تثبيت في المكان',b:'استمرار في الزمان'},{pair:['ح','ع'],title:'الحاء والعين',note:'الحاء: تعاظم. العين: اتضاح.',a:'تعاظم شامل',b:'اتضاح تدريجي'},{pair:['س','ش'],title:'السين والشين',note:'السين: خفي. الشين: ظاهر.',a:'خفي وذو اتجاه',b:'ظاهر ومتشعب'},{pair:['غ','ظ'],title:'الغين والظاء',note:'الغين: تغييب. الظاء: ظهور.',a:'إرجاع إلى المكمن',b:'ظهور في المركز'},{pair:['ض','ص'],title:'الضاد والصاد',note:'الضاد: إحاطة. الصاد: تحويل.',a:'تقيد الحركة',b:'تحرير الحركة'}];
+const RULES=[{id:'R1',text:'لا ترادف: اختلاف الصوت = اختلاف الحركة = اختلاف المعنى.',source:'النظام القرآني'},{id:'R2',text:'الصوت الأول يحمل الجنس والمنشأ، والأخير النتيجة والحدّ.',source:'الطور المهدوي'},{id:'R3',text:'الحركة الطويلة مادّة رابطة.',source:'المصوفة'},{id:'R4',text:'الحرف المضغّف صوت واحد مع تكثيف.',source:'المصفوفة'},{id:'R5',text:'التقاء صوتين من مجموعة يشدّد الدلالة.',source:'نظام المجموعات'},{id:'R6',text:'المعنى الكامل = مجموع الحركات ⊕ ترتيبها.',source:'المحاضرات'},{id:'R7',text:'لكل تعاقب صوتي حركة عامة تخصّه.',source:'أصل الخلق'},{id:'R8',text:'الاستعمال الجاري جزء من الحركة العامة.',source:'أصل الخلق'},{id:'R9',text:'الاستعمال المعاصر أصدق من دعاوى علماء اللغة.',source:'أصل الخلق'}];
+const CRITIQUE_RULES=[{n:1,text:'يُستخرج المعنى من حركة الأصوات أوّلًا.'},{n:2,text:'تُعرض المعاني المعجمية، ثم تُقارن.'},{n:3,text:'يُثبّت ما يوافق الحركة، ويُنفى ما خالفها.'},{n:4,text:'إن خالف المعجم ← فالحرف كشف رابطة.'}];
+const POSITION_WEIGHTS={1:[1],2:[.35,.65],3:[.20,.30,.50],4:[.15,.20,.25,.40],5:[.10,.15,.20,.25,.30]};
+function getWeights(n){if(POSITION_WEIGHTS[n])return POSITION_WEIGHTS[n];const a=[];for(let i=0;i<n;i++)a.push((i+1)/(n*(n+1)/2));return a;}
+const PATTERNS=[{id:'fa3ala',weight:'فَعَلَ',form:'{1}َ{2}َ{3}َ',kind:'mujarrad',added:[],effect:'الحدث المجرد'},{id:'fa3l',weight:'فَعْل',form:'{1}َ{2}ْ{3}',kind:'mujarrad',added:[],effect:'المصدر'},{id:'fi3l',weight:'فِعْل',form:'{1}ِ{2}ْ{3}',kind:'mujarrad',added:[],effect:'الحالة'},{id:'fu3l',weight:'فُعْل',form:'{1}ُ{2}ْ{3}',kind:'mujarrad',added:[],effect:'المادة'},{id:'fa3il',weight:'فَاعِل',form:'{1}َا{2}ِ{3}',kind:'mazid',added:['ا'],effect:'الفاعل'},{id:'maf3ul',weight:'مَفْعُول',form:'مَ{1}ْ{2}ُو{3}',kind:'mazid',added:['م','و'],effect:'المفعول'},{id:'fa33al',weight:'فَعَّال',form:'{1}َ{2}َّا{3}',kind:'mazid',added:['ا'],effect:'مبالغة'},{id:'tafa3ul',weight:'تَفَاعُل',form:'تَ{1}َا{2}ُ{3}',kind:'mazid2',added:['ت','ا'],effect:'المشاركة'},{id:'istiF3al',weight:'اِسْتِفْعَال',form:'اِسْتِ{1}ْ{2}َا{3}',kind:'mazid2',added:['ا','س','ت'],effect:'الطلب'}];
+function generateDerivations(rl){if(!rl||rl.length<3)return[];const[c1,c2,c3]=rl;return PATTERNS.map(p=>{const word=p.form.replace(/\{1\}/g,c1).replace(/\{2\}/g,c2).replace(/\{3\}/g,c3);return{...p,word};});}
+function stripDiacritics(w){return w.replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'أ').replace(/[ى]/g,'ي').replace(/[ؤ]/g,'و').replace(/[ئ]/g,'ي').replace(/[ة]/g,'ه').trim();}
+function cleanWord(w){let x=stripDiacritics(w);if(x.startsWith('ال')&&x.length>3)x=x.slice(2);return x;}
+function toLetters(w){return Array.from(cleanWord(w)).filter(ch=>CORE[ch]);}
+function getRole(i,total){if(total===1)return{id:1,label:'المنشأ والنتيجة',short:'منشأ',cls:'r1'};if(total===2)return i===0?{id:1,label:'المنشأ',short:'منشأ',cls:'r1'}:{id:4,label:'النتيجة',short:'نتيجة',cls:'r4'};if(i===0)return{id:1,label:'المنشأ',short:'منشأ',cls:'r1'};if(i===total-1)return{id:4,label:'النتيجة',short:'نتيجة',cls:'r4'};if(total===3)return{id:2,label:'التوجيه',short:'توجيه',cls:'r2'};if(i===1)return{id:2,label:'التوجيه',short:'توجيه',cls:'r2'};return{id:3,label:'الضبط',short:'ضبط',cls:'r3'};}
+function findDuplicates(letters){const counts={};letters.forEach(ch=>{counts[ch]=(counts[ch]||0)+1;});return Object.entries(counts).filter(([ch,n])=>n>1).map(([ch,n])=>({ch,count:n}));}
+function countUniquePermutations(letters){const f=n=>{let r=1;for(let i=2;i<=n;i++)r*=i;return r;};const d=findDuplicates(letters);let total=f(letters.length);d.forEach(x=>{total/=f(x.count);});return Math.round(total);}
+function permutationsOf(arr){if(arr.length<=1)return[arr.slice()];if(arr.length>5)return[arr.slice()];const seen=new Set();const out=[];const p=(cur,rest)=>{if(rest.length===0){const k=cur.join('');if(!seen.has(k)){seen.add(k);out.push(cur.slice());}return;}for(let i=0;i<rest.length;i++)p([...cur,rest[i]],[...rest.slice(0,i),...rest.slice(i+1)]);};p([],arr);return out;}
+function extractMovement(word){try{const letters=toLetters(word);if(letters.length===0)return null;const weights=getWeights(letters.length);const contributions=letters.map((ch,i)=>({ch,core:CORE[ch],weight:weights[i]||0,role:getRole(i,letters.length)}));const axesSum={direction:0,cohesion:0,intensity:0,visibility:0,time:0};let speedSum=0,tw=0;for(const c of contributions){for(const k of Object.keys(axesSum))axesSum[k]+=(c.core.axes[k]||0)*c.weight;speedSum+=c.core.speed*c.weight;tw+=c.weight;}const axes={};for(const k of Object.keys(axesSum))axes[k]=tw>0?axesSum[k]/tw:0;const baseSpeed=tw>0?speedSum/tw:0;const lastCh=letters[letters.length-1];const finalFactor=CORE[lastCh]?.finalFactor||1.0;const speed=Math.min(baseSpeed*finalFactor,1.0);const duplicates=findDuplicates(letters);const uniquePermutations=countUniquePermutations(letters);const permutations=permutationsOf(letters);return{word:cleanWord(word),letters,contributions,axes,baseSpeed,finalFactor,speed,sentence:buildSentence(contributions),concept:buildConcept(contributions),breakdown:buildBreakdown(contributions),ks:KS_DATA[cleanWord(word)]||null,duplicates,uniquePermutations,permutations};}catch(e){console.error(e);return null;}}
+function buildSentence(cs){if(cs.length===1)return cs[0].core.movement;const p=cs.map(c=>c.core.movement);if(p.length===2)return`${p[0]} ← ${p[1]}`;if(p.length===3)return`${p[0]} ← ${p[1]} ← ${p[2]}`;return`${p[0]} ← ${p.slice(1,-1).join(' ثم ')} ← ${p[p.length-1]}`;}
+function buildConcept(cs){if(cs.length===2&&cs[0].ch==='ح'&&cs[1].ch==='د')return'الحدّ';return null;}
+function buildBreakdown(cs){return cs.map(c=>c.core.movement).join(' + ');}
+function renderRadar(axes){const size=320,cx=size/2,cy=size/2,rMax=115;const keys=['direction','cohesion','intensity','visibility','time'];const labels=['الاتجاه','الترابط','التعاظم','الظهور','الزمان'];const icons=['🧭','🧩','🔥','👁','⏳'];const n=keys.length;const points=keys.map((k,i)=>{const a=-Math.PI/2+(2*Math.PI*i)/n;const v=axes[k]||0;const r=((v+1)/2)*rMax;return{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,value:v};});const grid=[.25,.5,.75,1].map(ratio=>{const pts=keys.map((_,i)=>{const a=-Math.PI/2+(2*Math.PI*i)/n;const r=ratio*rMax;return`${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;}).join(' ');return`<polygon points="${pts}" fill="none" stroke="#E5E7EB" stroke-width="1"/>`;}).join('');const ax=keys.map((_,i)=>{const a=-Math.PI/2+(2*Math.PI*i)/n;return`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*rMax}" y2="${cy+Math.sin(a)*rMax}" stroke="#E5E7EB"/>`;}).join('');const pp=points.map(p=>`${p.x},${p.y}`).join(' ');const lb=points.map((p,i)=>{const a=-Math.PI/2+(2*Math.PI*i)/n;const lx=cx+Math.cos(a)*(rMax+32),ly=cy+Math.sin(a)*(rMax+32);return`<text x="${lx}" y="${ly}" text-anchor="middle" font-size="16">${icons[i]}</text><text x="${lx}" y="${ly+20}" text-anchor="middle" font-size="12" fill="#6B7280" font-weight="700">${labels[i]}</text><text x="${lx}" y="${ly+36}" text-anchor="middle" font-size="11" fill="#1E2A5A" font-weight="700">${Math.round((p.value+1)*50)}%</text>`;}).join('');return`<svg class="radar-svg" viewBox="0 0 ${size} ${size}">${grid}${ax}<polygon points="${pp}" fill="rgba(30,42,90,0.18)" stroke="#1E2A5A" stroke-width="2"/>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#1E2A5A"/>`).join('')}${lb}</svg>`;}
+function pct(v){return Math.round((v+1)*50)+'%';}
+let currentAnalysis=null;
+const SafeStorage={_mem:{},get(k){try{return localStorage.getItem(k);}catch(e){return this._mem[k]??null;}},set(k,v){try{localStorage.setItem(k,v);}catch(e){this._mem[k]=v;}},remove(k){try{localStorage.removeItem(k);}catch(e){delete this._mem[k];}}};
+function safeReplaceState(url){try{history.replaceState(null,'',url);}catch(e){}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2200);}
+const THEME_KEY='lum_theme_v3';
+function applyTheme(t){if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');const b=document.getElementById('theme-btn');if(b)b.textContent='☀️';}else{document.documentElement.removeAttribute('data-theme');const b=document.getElementById('theme-btn');if(b)b.textContent='🌙';}}
+function initTheme(){applyTheme(SafeStorage.get(THEME_KEY)||'light');}
+document.getElementById('theme-btn').addEventListener('click',()=>{const cur=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';const next=cur==='dark'?'light':'dark';SafeStorage.set(THEME_KEY,next);applyTheme(next);});
+const HISTORY_KEY='lum_history_v3',HISTORY_MAX=50;
+function loadHistory(){try{const r=SafeStorage.get(HISTORY_KEY);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveHistoryItem(mv){try{const h=loadHistory();const ex=h.findIndex(x=>x.word===mv.word);if(ex>=0)h.splice(ex,1);h.unshift({id:Date.now()+'_'+Math.random().toString(36).slice(2,8),word:mv.word,sentence:mv.sentence,letters:mv.letters,speed:mv.speed,timestamp:Date.now()});if(h.length>HISTORY_MAX)h.length=HISTORY_MAX;SafeStorage.set(HISTORY_KEY,JSON.stringify(h));updateHistoryBadge();}catch(e){}}
+function deleteHistoryItem(id){const h=loadHistory().filter(x=>x.id!==id);SafeStorage.set(HISTORY_KEY,JSON.stringify(h));updateHistoryBadge();renderHistory();showToast('🗑️');}
+function clearHistory(){if(!confirm('حذف كل السجل؟'))return;SafeStorage.remove(HISTORY_KEY);updateHistoryBadge();renderHistory();showToast('🗑️');}
+function updateHistoryBadge(){const c=loadHistory().length;const l=document.getElementById('history-count-label');if(l)l.textContent=c===0?'0':c;}
+function formatRelativeTime(date){const diff=Date.now()-date.getTime();const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000);if(m<1)return'الآن';if(m<60)return`قبل ${m} د`;if(h<24)return`قبل ${h} س`;if(d<7)return`قبل ${d} ي`;return date.toLocaleDateString('ar-EG',{day:'numeric',month:'short'});}
+function renderHistory(){const c=document.getElementById('history-list-container');if(!c)return;const h=loadHistory();if(h.length===0){c.innerHTML=`<div class="card"><div class="empty-state">📋<br>لا يوجد سجل بعد.</div></div>`;return;}c.innerHTML=`<div>${h.map(item=>`<div class="card" data-id="${item.id}" data-word="${item.word}" style="padding:12px;cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="flex:1;"><div style="font-size:1.1rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);">${item.word}</div><div style="font-size:.85rem;color:var(--ink-soft);">${item.sentence}</div><div style="font-size:.75rem;color:var(--ink-muted);margin-top:4px;">${Math.round(item.speed*100)}% · ${formatRelativeTime(new Date(item.timestamp))}</div></div><div style="display:flex;gap:6px;"><button class="btn-secondary" data-action="open" data-word="${item.word}">↗</button><button class="btn-secondary" data-action="delete" data-id="${item.id}">🗑</button></div></div></div>`).join('')}</div>`;c.querySelectorAll('.card').forEach(it=>{if(!it.dataset.word)return;it.addEventListener('click',e=>{if(e.target.closest('button'))return;document.getElementById('word-input').value=it.dataset.word;analyze(it.dataset.word);});});c.querySelectorAll('[data-action="open"]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();document.getElementById('word-input').value=b.dataset.word;analyze(b.dataset.word);}));c.querySelectorAll('[data-action="delete"]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();deleteHistoryItem(b.dataset.id);}));}
+function renderPersonalStats(){const c=document.getElementById('personal-stats-content');if(!c)return;const h=loadHistory();if(h.length===0){c.innerHTML=`<div class="empty-state">📊<br>حلّل بعض الكلمات.</div>`;return;}const total=h.length;const unique=new Set(h.map(x=>x.word)).size;const avgSpeed=h.reduce((s,x)=>s+x.speed,0)/h.length;const avgLetters=h.reduce((s,x)=>s+x.letters.length,0)/h.length;c.innerHTML=`<div class="personal-stats-grid"><div class="personal-stat blue"><div class="num">${total}</div><div class="lbl">تحليل</div></div><div class="personal-stat green"><div class="num">${unique}</div><div class="lbl">كلمة فريدة</div></div><div class="personal-stat yellow"><div class="num small">${Math.round(avgSpeed*100)}%</div><div class="lbl">متوسط السرعة</div></div><div class="personal-stat purple"><div class="num small">${avgLetters.toFixed(1)}</div><div class="lbl">متوسط الحروف</div></div></div>`;}
+function renderHeatmap(){const c=document.getElementById('heatmap-content');if(!c)return;const h=loadHistory();if(h.length===0){c.innerHTML=`<div class="empty-state">🗺️<br>حلّل بعض الكلمات.</div>`;return;}const freq={};Object.keys(CORE).forEach(ch=>{freq[ch]=0;});h.forEach(x=>x.letters.forEach(ch=>{if(freq[ch]!==undefined)freq[ch]++;}));const max=Math.max(...Object.values(freq),1);const getLv=n=>{if(n===0)return 0;const r=n/max;if(r<0.2)return 1;if(r<0.4)return 2;if(r<0.65)return 3;if(r<0.85)return 4;return 5;};const order=['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','هـ','و','ي'];c.innerHTML=`<div class="heatmap">${order.map(ch=>{const n=freq[ch]||0,lv=getLv(n);return`<div class="heatmap-cell" data-lv="${lv}" data-letter="${ch}">${ch}${n>0?`<span class="count-badge">${n}</span>`:''}</div>`;}).join('')}</div>`;c.querySelectorAll('.heatmap-cell').forEach(cell=>cell.addEventListener('click',()=>{showScreen('letters');renderLetterDetail(cell.dataset.letter);}));}
+function renderCalendar(){const c=document.getElementById('calendar-content');if(!c)return;const h=loadHistory();if(h.length===0){c.innerHTML=`<div class="empty-state">📅<br>ابدأ بتسجيل تحليلاتك.</div>`;return;}const counts={};h.forEach(x=>{const d=new Date(x.timestamp);d.setHours(0,0,0,0);const key=d.toISOString().slice(0,10);counts[key]=(counts[key]||0)+1;});const today=new Date();today.setHours(0,0,0,0);const start=new Date(today);start.setDate(start.getDate()-83);const days=[];for(let i=0;i<84;i++){const d=new Date(start);d.setDate(start.getDate()+i);const key=d.toISOString().slice(0,10);days.push({date:d,key,count:counts[key]||0});}const maxCount=Math.max(...days.map(d=>d.count),1);const getLv=n=>{if(n===0)return 0;const r=n/maxCount;if(r<0.34)return 1;if(r<0.67)return 2;if(r<1)return 3;return 4;};c.innerHTML=`<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:4px;">${days.map(d=>{const lv=getLv(d.count);const colors=['#F4F4EC','#DCFCE7','#86EFAC','#10B981','#047857'];return`<div style="aspect-ratio:1;background:${colors[lv]};border-radius:3px;"></div>`;}).join('')}</div>`;}
+function renderRecommendations(){const c=document.getElementById('recommend-content');if(!c)return;const h=loadHistory();const analyzed=new Set(h.map(x=>x.word));const list=['ضرب','كتب','خلق','فطر','حرد','دحر','حمد','علم'];c.innerHTML=`<div class="perm-grid">${list.filter(w=>!analyzed.has(w)).slice(0,6).map(w=>{const mv=extractMovement(w);return`<div class="perm-card" data-word="${w}" style="cursor:pointer;"><div class="perm-word">${w}</div><div class="perm-movement">${mv?mv.sentence:''}</div></div>`;}).join('')}</div>`;c.querySelectorAll('.perm-card').forEach(card=>card.addEventListener('click',()=>{document.getElementById('word-input').value=card.dataset.word;analyze(card.dataset.word);}));}
+function downloadFile(content,filename,mime){const b=new Blob([content],{type:mime}),u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);}
+function exportPDF(){showToast('🖨️');setTimeout(()=>window.print(),300);}
+function exportJSON(){if(!currentAnalysis)return;downloadFile(JSON.stringify(currentAnalysis,null,2),`${currentAnalysis.word}.json`,'application/json');showToast('✅');}
+function copyAnalysis(){if(!currentAnalysis)return;const lines=[`📖 ${currentAnalysis.word}`,'',`✨ ${currentAnalysis.sentence}`,''];lines.push(...currentAnalysis.contributions.map((c,i)=>`${i+1}. ${c.ch} — ${c.core.movement}`));navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('✅'),()=>showToast('⚠️'));}
+
+/* ═══ AI_PROSE + AI_COMPOSER ═══ */
+const AI_PROSE={tierPhrase(mv){const n=mv.letters.length;if(n===1)return"حرف واحد — منشأ ونتيجة.";if(n===2)return"تسلسل ثنائيّ.";if(n===3)return"تسلسل ثلاثيّ — منشأ ← توجيه ← نتيجة.";return`تسلسل من ${n} حروف.`;},speedPhrase(s){const sp=Math.round(s*100);if(sp<30)return`سرعة ${sp}% — بطيئة.`;if(sp<70)return`سرعة ${sp}% — متوسطة.`;return`سرعة ${sp}% — سريعة.`;},axesPhrase(a){const names={direction:'الاتجاه',cohesion:'الترابط',intensity:'التعاظم',visibility:'الظهور',time:'الزمان'};return"البصمة — "+Object.keys(names).map(k=>`${names[k]}: ${Math.round((a[k]+1)*50)}%`).join(' · ')+".";},letterPhrases(mv){return mv.contributions.map((c,i)=>({text:`الحرف ${i+1} («${c.ch}»): ${c.core.movement}. دوره: ${c.role.label}، ووزنه ${Math.round(c.weight*100)}%.`}));},aggregatePhrase(mv){return`المحصّلة: ${mv.sentence}.`;},conceptPhrase(mv){if(!mv.concept)return null;return`المفهوم: «${mv.concept}».`;},permutationPhrase(mv){if(mv.uniquePermutations<=1)return null;return`عدد التباديل: ${mv.uniquePermutations}.`;},documentedPhrase(mv){if(!mv.ks)return null;const parts=[];if(mv.ks.text)parts.push(`الحركة: ${mv.ks.text}`);if(mv.ks.lexicon)parts.push(`المعجم: ${mv.ks.lexicon}`);if(mv.ks.quran)parts.push(`التنزيل: ${mv.ks.quran}`);return{source:mv.ks.source||'',text:parts.join(' ')};},warning(){return"هذا التحليل مبنيّ على المصفوفة الـ28. والمنهج لا يكتمل، والصياغة مرشّحة.";}};
+const AI_COMPOSER={compose(mv){if(!mv)return null;const lines=[];lines.push({tag:'وصف',text:`تحليلٌ وصفيّ لتسلسل «${mv.word}».`});lines.push({tag:'وصف',text:AI_PROSE.tierPhrase(mv)});lines.push({tag:'وصف',text:`حروفه: ${mv.letters.join(' ← ')}.`});AI_PROSE.letterPhrases(mv).forEach(lp=>lines.push({tag:'استخراج',text:lp.text}));lines.push({tag:'وصف',text:AI_PROSE.aggregatePhrase(mv)});const concept=AI_PROSE.conceptPhrase(mv);if(concept)lines.push({tag:'وصف',text:concept});lines.push({tag:'استخراج',text:AI_PROSE.speedPhrase(mv.speed)});lines.push({tag:'استخراج',text:AI_PROSE.axesPhrase(mv.axes)});const perms=AI_PROSE.permutationPhrase(mv);if(perms)lines.push({tag:'استخراج',text:perms});const doc=AI_PROSE.documentedPhrase(mv);if(doc)lines.push({tag:'موثَّق',text:doc.text,source:doc.source});lines.push({tag:'تحذير',text:AI_PROSE.warning()});return lines;},renderHTML(mv){const lines=this.compose(mv);if(!lines)return'';const tc={'وصف':'narrative-tag-desc','استخراج':'narrative-tag-extract','موثَّق':'narrative-tag-doc','تحذير':'narrative-tag-warn','مرويّ':'narrative-tag-divine','طبقة':'narrative-tag-levels'};return`<div class="narrative-report" id="narrative-report-box"><div class="narrative-title"><span>📜 السرد الوصفيّ</span><button class="narrative-close" onclick="toggleNarrative(false)">✕</button></div>${lines.map(l=>`<div class="narrative-line"><span class="narrative-tag ${tc[l.tag]||''}">${l.tag}</span><span class="narrative-text">${l.text}</span>${l.source?`<span class="narrative-source">— ${l.source}</span>`:''}</div>`).join('')}</div>`;}};
+
+/* ═══ FILTER — الفلتر الصارم (يُبدّل لا يحذف) ═══ */
+function filterText(s) {
+  let out = s;
+  FORBIDDEN_WORDS.forEach(f => { out = out.split(f.pattern).join('[مُرشَّح — لا حكم]'); });
+  return out;
+}
+
+/* ═══ SYNTHESIS_VALIDATOR — شروط الثقة الأربعة ═══ */
+function synthesisValidate(ctx) {
+  const resources = ctx.resources || 0;
+  const lift = ctx.lift || 0;
+  const negations = ctx.negations || [];
+  const lifeSigns = ctx.lifeSigns || [];
+  const conditions = {
+    resources: resources >= 5,
+    lift: lift >= 100,
+    negative: negations.length > 0,
+    lifeLinks: lifeSigns.length >= 3
+  };
+  const score = Object.values(conditions).filter(Boolean).length;
+  let conclusion;
+  if (score === 4) conclusion = 'والقرائن الأربع مجتمعة — والراجح ما ذُكر، والمراجعة تبقى واجبة.';
+  else if (score === 3) conclusion = 'والقرائن ثلاثٌ من أربع — والراجح ما ذُكر، مع ترقّبٍ للقرينة الرابعة.';
+  else if (score === 2) conclusion = 'والبيّنة قاصرة — لا يُبنى حكم، والمطلوب إغناء المصادر.';
+  else conclusion = 'لا تُبنى قرينة — والمنهج لا يبني على مشتبه.';
+  return { score, conditions, conclusion };
+}
+
+/* ═══ JUSTIFIED_DISCOURSE — الروابط المُبرَّرة + النبرة النابعة ═══ */
+function linkBetween(prev, next) {
+  if (!next) return null;
+  if (next.hasNegativeEvidence) return 'وهنا المفصل';
+  if (next.type === 'analogy') return 'وللاستئناس فقط';
+  if (prev && prev.type === 'summary' && next.type === 'details') return 'وبيان ذلك';
+  if (next.reinforces) return 'ويؤكّده';
+  if (next.hasConflict) return 'لكن';
+  return null;
+}
+function toneFor(step) {
+  if (!step) return null;
+  if (step.hasNegativeEvidence) return 'فانظر: هذا فرقٌ بالاستقراء، لا بالدعوى.';
+  if (step.hasConflict) return 'وهنا المفصل: لا يمكن الجمع بين الأمرين.';
+  if (step.lift && step.lift >= 100) return 'وهذا الاقتران يفوق الصدفة بما لا يُستهان به.';
+  if (step.type === 'insufficient') return 'فالبيّنة هنا لا تُسعف — والحكم للمراجعة.';
+  if (step.missingSource) return 'ولا نصّ عند النيليّ لهذا التسلسل — فالإقرار بالغياب أصدق.';
+  return null;
+}
+
+/* ═══ NARRATIVE_COMPOSER_11 — 11 خطوة نيلية ═══ */
+function composeNarrative11(mv) {
+  const lex = QURAN_LEXICON[mv.word] || null;
+  const valid = synthesisValidate({
+    resources: lex?.resources || 0,
+    lift: lex?.lift || 0,
+    negations: lex?.negations || [],
+    lifeSigns: lex?.lifeSigns || []
+  });
+  const s = [];
+  const letters = mv.letters.join(' ← ');
+
+  s.push({n:'١', title:'الأساس: لا ترادف', tag:'موثَّق',
+    text:`القاعدةُ الأولى: لا ترادف — «استحالة وجود المترادفات…». وأصلُه «${lex?.root || letters}» · ووزنه القصديّ: «${lex?.weight || '—'}» — واللفظُ هنا مستقلٌّ بذاته، لا يجوز ردُّه إلى مشتقّه.`,
+    source:'nili_derivation_engine'});
+
+  s.push({n:'٢', title:'موارد النظير', tag:'استئناس', type:'analogy',
+    text: lex?.counterpart ? `اللفظُ له نظيرٌ ظاهريّ: «${lex.counterpart}» — والفارق بنيويّ، لا لفظيّ.` : 'ولا نظيرَ لغويًّا مقيسًا لهذا التسلسل في اللغات المقارَنة.',
+    source:'nili_language_engine', missingSource: !lex?.counterpart});
+
+  const ax = mv.axes;
+  s.push({n:'٣', title:'وصف بصريّ مُستحدث', tag:'وصفٌ مُستحدث',
+    text:`**وصفٌ بصريّ مُستحدث — لا من نصوص النيليّ:** ومحاوره الخمسة كلُّها — «الاتجاه» ${Math.round((ax.direction+1)*50)}% · «الترابط» ${Math.round((ax.cohesion+1)*50)}% · «التعاظم» ${Math.round((ax.intensity+1)*50)}% · «الظهور» ${Math.round((ax.visibility+1)*50)}% · «الزمان» ${Math.round((ax.time+1)*50)}%. وهو أداةُ عرضٍ لا أصلٌ يُستدلّ به.`,
+    source:'nili_visual_signature'});
+
+  s.push({n:'٤', title:'المقارنة اللغويّة', tag:'استخراج',
+    text:`وبمقابلة حركته «${mv.sentence}» بالمعاجم: الحكمُ مُستخرَجٌ بمقياس التوافق، لا منصوصٌ عند النيليّ.`,
+    source:'nili_critique_engine'});
+
+  s.push({n:'٥', title:'موارد اللفظ', tag:'استخراج', type:'summary',
+    text: lex ? `ولفظ «${mv.word}» موارده في المصحف ${lex.resources} موضعًا. وصورُه المشكولة: ${lex.shapes}. ومحلُّه الإعرابيّ الغالب: ${lex.irab}.` : `ولفظ «${mv.word}» موارده في المصحف غير مسجّلة في القاعدة الحالية.`,
+    source:'quran_concordance', missingSource: !lex});
+
+  const coups = (lex?.couplings || []).map(c => `«${c.word}» ${c.count}`).join(' · ');
+  s.push({n:'٦', title:'الاقترانات', tag:'استخراج', lift: lex?.lift,
+    text: lex ? `يقترن بـ${coups} — اقترانٌ مقيسٌ بمقياس الصورة المفردة.` : 'لا اقترانات مسجّلة.',
+    source:'الاقتران المقيس', missingSource: !lex});
+
+  const negs = (lex?.negations || []).join(' · ');
+  s.push({n:'٧', title:'نفي الاقتران', tag:'نفي',
+    hasNegativeEvidence: (lex?.negations || []).length > 0,
+    text: lex?.negations?.length ? `**والدليلُ السلبيّ:** لم يقترن بـ«${negs}» في صورةٍ مفردةٍ مباشرة، مع أنّهما في دائرةٍ واحدة. وهذا إثباتُ ما لم يقترن مباشرةً — وهو جوهر المنهج.` : 'ولا دليلَ سلبيًّا مقيسًا.',
+    source:'quran_lex_negations', missingSource: !lex?.negations?.length});
+
+  s.push({n:'٨', title:'الفعل الحاكم', tag:'استخراج', reinforces: true,
+    text: lex ? `والفعلُ الحاكم يُستخرَج من مواضعه: ${(lex.verses||[]).join(' · ')}.` : 'لا مواضع مسجّلة.',
+    source:'المواضع والفعل', missingSource: !lex});
+
+  s.push({n:'٩أ', title:'الاستئناس', tag:'استئناس', type:'analogy',
+    text:`واستئناسًا بالروايات — في حرفه «${mv.letters[0]}» لا في تسلسله. ⚠️ وهذا استئناسٌ بحرفٍ مفردٍ لا بتسلسل اللفظ.`,
+    source:'nili_narrations'});
+
+  s.push({n:'٩ب', title:'الاستئناس — تحذير مصاحب', tag:'تحذير',
+    text:'وهذا استئناسٌ لا استدلال — فلا يُبنى عليه حكمٌ لفظيّ.',
+    source:'تحذيرٌ مصاحب'});
+
+  s.push({n:'١٠', title:'تصحيح الأخطاء', tag:'تحذير',
+    text:'**والمنهجُ يراجع نفسه:** فما بُني على دليلٍ ضعيفٍ يُردّ. (ومحرّك التصحيح غيرُ محمَّلٍ في هذه الجلسة.)',
+    source:'المنهج يراجع نفسه'});
+
+  const score = valid.score;
+  const grade = score===4?'عالية':score===3?'متوسّطة':score===2?'ناقصة':'مشتبهة';
+  s.push({n:'١١', title:'التوليف المرشَّح', tag:'مرشَّح', type:'synthesis',
+    text: lex
+      ? `درجةُ التوليف **${grade}** — واستوفى ${score} من الشروط الأربعة.`
+      : `البيانات قليلة جدًّا لـ«${mv.word}» — والمنهج لا يبني على مشتبه.`,
+    conclusion: valid.conclusion, score: score});
+
+  const out = [];
+  s.forEach((step, i) => {
+    const link = i > 0 ? linkBetween(s[i-1], step) : null;
+    if (link) out.push({type:'link', text:`← 【${link}】`});
+    const tone = toneFor(step);
+    const cleanText = filterText(step.text);
+    out.push({type:'step', step, text: cleanText, tone});
+  });
+
+  if (score >= 2) {
+    out.push({type:'conclusion', text: s[10].conclusion});
+  }
+  if (score === 4) {
+    out.push({type:'boundary', text:'وهذا ما يُدرَك من المعنى الأصليّ — والمعنى التامّ صفةُ صاحب العلم الكامل، لا صفةُ الباحث.'});
+  }
+
+  return {steps: out, score, grade, valid};
+}
+
+/* ═══ RENDER_NARRATIVE_11 — عرض السرد ═══ */
+function renderNarrative11(mv) {
+  const {steps, score, grade} = composeNarrative11(mv);
+  const tagClass = {'موثَّق':'narrative-tag-doc','استئناس':'narrative-tag-divine','وصفٌ مُستحدث':'narrative-tag-desc','استخراج':'narrative-tag-extract','نفي':'narrative-tag-warn','تحذير':'narrative-tag-warn','مرشَّح':'narrative-tag-levels'};
+  let html = `<div class="narrative-report" id="narrative11-box">
+    <div class="narrative-title">
+      <span>📜 السرد النيليّ — ${mv.word} · ${grade} (${score}/4)</span>
+      <button class="narrative-close" onclick="document.getElementById('narrative11-box').remove()">✕</button>
+    </div>`;
+  steps.forEach(item => {
+    if (item.type === 'link') {
+      html += `<div style="text-align:center;color:var(--gold);font-weight:700;padding:6px 0;">${item.text}</div>`;
+    } else if (item.type === 'step') {
+      const st = item.step;
+      const tc = tagClass[st.tag] || 'narrative-tag-desc';
+      html += `<div class="narrative-line">
+        <span class="narrative-tag ${tc}">【${st.n}】${st.tag}</span>
+        <span class="narrative-text"><strong>${st.title}:</strong> ${item.text}
+        ${st.source ? `<br><span style="font-size:.72rem;color:var(--ink-muted);font-style:italic;">— ${st.source}</span>` : ''}
+        ${item.tone ? `<div style="margin-top:8px;padding:8px 12px;background:var(--gold-soft);border-inline-start:3px solid var(--gold);border-radius:6px;font-family:var(--font-serif);font-style:italic;color:#5A4210;">${item.tone}</div>` : ''}
+        </span>
+      </div>`;
+    } else if (item.type === 'conclusion') {
+      html += `<div style="margin-top:14px;padding:12px 16px;background:var(--green-soft);border:1px solid var(--green);border-radius:8px;font-family:var(--font-serif);color:#065F46;font-weight:600;">▼ الخاتمة: ${item.text}</div>`;
+    } else if (item.type === 'boundary') {
+      html += `<div style="margin-top:10px;padding:12px 16px;background:var(--purple-soft);border:1px solid var(--purple);border-radius:8px;font-family:var(--font-serif);color:#4C1D95;font-weight:600;">⛔ حدّ المعنى: ${item.text}</div>`;
+    }
+  });
+  html += `</div>`;
+  return html;
+}
+function toggleNarrative11() {
+  const output = document.getElementById('analysis-output');
+  if (!output || !currentAnalysis) { showToast('⚠️ لا يوجد تحليل'); return; }
+  const ex = document.getElementById('narrative11-box');
+  if (ex) { ex.remove(); return; }
+  const w = document.createElement('div');
+  w.innerHTML = renderNarrative11(currentAnalysis);
+  output.appendChild(w.firstElementChild);
+  setTimeout(() => {
+    const b = document.getElementById('narrative11-box');
+    if (b) b.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+}
+
+/* ═══ AI_LEVELS ═══ */
+const AI_LEVELS={
+renderLetter(ch){const l=DIVINE_LEVELS[ch];if(!l)return'';const core=CORE[ch];const tierName=core.tier==='green'?'الجزء الأول':'الجزء الثاني';return`<div class="level-block"><div class="level-head"><div class="level-glyph">${ch}</div><div><div class="level-name">الحرف «${ch}»</div><div class="level-movement">${l.movement}</div></div></div><div class="level-tier li-1"><span class="level-tier-num">①</span><span class="level-tier-label">الحركة البنيوية (من المصفوفة الـ28)</span><div class="level-tier-text">${l.movement}<br><span style="color:#6B7280;font-size:.82rem;">المصدر: ${core.source} · ${tierName}</span></div></div><div class="level-tier li-2"><span class="level-tier-num">②</span><span class="level-tier-label">التصوّر الوجوديّ</span><div class="level-tier-text">${l.conceptual}</div></div><div class="level-tier li-3"><span class="level-tier-num">③</span><span class="level-tier-label">الكيفية (لماذا؟ وكيف؟)</span><div class="level-tier-text">${l.modality}</div></div><div class="level-tier li-4"><span class="level-tier-num">④</span><span class="level-tier-label">الاسم الإلهيّ المطابق (من الروايات)</span><div class="level-tier-text">${l.divineLink}</div></div><div class="level-synthesis"><div class="level-synthesis-title"><span>🕊️</span> التوليف البنيويّ</div><div class="level-synthesis-text">${l.synthesis}</div></div><div class="divine-warning" style="margin-top:12px;">⚠️ الربط بين الحركة الصوتية والاسم الإلهيّ <strong>اجتهاديّ وصفيّ</strong>، لا يُبنى عليه حكم قرآنيّ.</div></div>`;},
+renderHTML(mv){if(!mv||!mv.letters.length)return'';const blocks=mv.letters.map(ch=>{const l=DIVINE_LEVELS[ch];if(!l)return'';const core=CORE[ch];const tierName=core.tier==='green'?'ج1':'ج2';return`<div class="level-block"><div class="level-head"><div class="level-glyph">${ch}</div><div><div class="level-name">الحرف «${ch}»</div><div class="level-movement">${l.movement} (${tierName})</div></div></div><div class="level-tier li-1"><span class="level-tier-num">①</span><span class="level-tier-label">الحركة</span><div class="level-tier-text">${l.movement}</div></div><div class="level-tier li-2"><span class="level-tier-num">②</span><span class="level-tier-label">التصوّر الوجوديّ</span><div class="level-tier-text">${l.conceptual}</div></div><div class="level-tier li-3"><span class="level-tier-num">③</span><span class="level-tier-label">الكيفية</span><div class="level-tier-text">${l.modality}</div></div><div class="level-tier li-4"><span class="level-tier-num">④</span><span class="level-tier-label">الاسم الإلهيّ</span><div class="level-tier-text">${l.divineLink}</div></div><div class="level-synthesis"><div class="level-synthesis-title"><span>🕊️</span> التوليف</div><div class="level-synthesis-text">${l.synthesis}</div></div></div>`;}).filter(Boolean);return`<div class="levels-layer" id="levels-layer-box"><div class="levels-layer-header"><div class="title"><span>🎚️</span> الطبقات البنيوية لتسلسل «${mv.word}»</div><button class="close" onclick="toggleLevels(false)">✕</button></div><div class="divine-notice" style="background:#F5F3FF;border-color:#8B5CF6;color:#5B21B6;">⚠️ الطبقات الأربع <strong>متكاملة، لا متناقضة</strong>.</div>${blocks.join('')}<div class="divine-warning" style="background:#F5F3FF;border-color:#8B5CF6;color:#5B21B6;">⚠️ هذا التحليل اجتهاديّ وصفيّ، لا يُبنى عليه حكم قرآنيّ.</div></div>`;}};
+function toggleLevels(forceState){const output=document.getElementById('analysis-output');if(!output||!currentAnalysis){showToast('⚠️ لا يوجد تحليل');return;}const btn=document.getElementById('levels-btn');const existing=document.getElementById('levels-layer-box');const show=(forceState===undefined)?!existing:forceState;if(!show){if(existing)existing.remove();if(btn)btn.classList.remove('active');return;}if(existing)existing.remove();const w=document.createElement('div');w.innerHTML=AI_LEVELS.renderHTML(currentAnalysis);if(w.firstElementChild)output.appendChild(w.firstElementChild);if(btn)btn.classList.add('active');setTimeout(()=>{const b=document.getElementById('levels-layer-box');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+
+/* ═══ AI_DIVINE ═══ */
+const AI_DIVINE={renderHTML(mv){if(!mv||!mv.letters.length)return'';const blocks=mv.letters.map(ch=>{const d=DIVINE_ASPECTS[ch];if(!d)return'';return`<div class="divine-letter-block"><div class="divine-letter-head"><div class="divine-letter-glyph">${ch}</div><div class="divine-letter-info"><div class="divine-letter-name">${CORE[ch].movement}</div><div class="divine-letter-role">حيثيات متكاملة</div></div></div><div class="aspects-grid">${d.aspects.map(a=>`<div class="aspect-card"><div class="aspect-label">${a.label}</div><div class="aspect-text">${a.text}</div></div>`).join('')}</div><div class="divine-row" style="background:#EDE9FE;border-radius:6px;padding:10px;margin-top:10px;"><span class="label">🕊️ التوليف:</span><span class="content">${d.unified}</span></div></div>`;}).filter(Boolean);return`<div class="divine-layer" id="divine-layer-box"><div class="divine-layer-header"><div class="title"><span>✨</span> الطبقة الاسمائية</div><button class="close" onclick="toggleDivine(false)">✕</button></div><div class="divine-notice">⚠️ روايات أهل البيت (ع) — متكاملة، لا متناقضة.</div>${blocks.join('')}<div class="divine-warning">⚠️ اجتهاديّ وصفيّ.</div></div>`;}};
+function toggleDivine(f){const output=document.getElementById('analysis-output');if(!output||!currentAnalysis){showToast('⚠️');return;}const btn=document.getElementById('divine-btn');const ex=document.getElementById('divine-layer-box');const show=(f===undefined)?!ex:f;if(!show){if(ex)ex.remove();if(btn)btn.classList.remove('active');return;}if(ex)ex.remove();const w=document.createElement('div');w.innerHTML=AI_DIVINE.renderHTML(currentAnalysis);if(w.firstElementChild)output.appendChild(w.firstElementChild);if(btn)btn.classList.add('active');setTimeout(()=>{const b=document.getElementById('divine-layer-box');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+
+/* ═══ AI_QURANIC ═══ */
+const AI_QURANIC={renderHTML(mv){if(!mv)return'';const occ=QURANIC_OCCURRENCES[mv.word]||[];const kQ=mv.ks&&mv.ks.quran?[{ref:mv.ks.source||'عند النيليّ',text:mv.ks.quran}]:[];const all=[...occ,...kQ];const lex=QURAN_LEXICON[mv.word];return`<div class="quran-layer" id="quran-layer-box"><div class="quran-layer-header"><div class="title"><span>📍</span> أين ورد «${mv.word}»؟</div><button class="close" onclick="toggleQuran(false)">✕</button></div>${lex?`<div class="quran-verse" style="background:var(--gold-soft);border-color:var(--gold);"><div class="quran-verse-ref">قرائن الحياة (${lex.lifeSigns.length}) — بمقياس مشاركة الآية</div><div class="quran-verse-text" style="font-family:var(--font);font-size:.95rem;">${lex.lifeSigns.join(' · ')}</div><div style="font-size:.75rem;color:#7A5A1A;margin-top:8px;font-style:italic;">الحجّة: نصُّ النيليّ «الأرض الميّتة تُحيى بالماء». المستبعَد: الذاتيّة والعامّة.</div></div>`:''}${all.length?all.map(v=>`<div class="quran-verse"><div class="quran-verse-ref">${v.ref}</div><div class="quran-verse-text">${v.text}</div></div>`).join(''):`<div class="quran-empty">لا موارد مسجّلة.<br><small>قابلة للتوسعة.</small></div>`}</div>`;}};
+function toggleQuran(f){const output=document.getElementById('analysis-output');if(!output||!currentAnalysis){showToast('⚠️');return;}const btn=document.getElementById('quran-btn');const ex=document.getElementById('quran-layer-box');const show=(f===undefined)?!ex:f;if(!show){if(ex)ex.remove();if(btn)btn.classList.remove('active');return;}if(ex)ex.remove();const w=document.createElement('div');w.innerHTML=AI_QURANIC.renderHTML(currentAnalysis);if(w.firstElementChild)output.appendChild(w.firstElementChild);if(btn)btn.classList.add('active');setTimeout(()=>{const b=document.getElementById('quran-layer-box');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+
+/* ═══ AI_ARTICULATION ═══ */
+const AI_ARTICULATION={renderHTML(mv){if(!mv||!mv.letters.length)return'';const blocks=mv.letters.map(ch=>{const a=VOCAL_ARTICULATION[ch];if(!a)return'';return`<div class="articulation-block"><div class="articulation-head"><div class="articulation-glyph">${ch}</div><div class="articulation-info"><div class="articulation-name">${a.name}</div></div></div><div class="articulation-row"><span class="label">المخرج:</span><span class="content">${a.place}</span></div><div class="articulation-row"><span class="label">الطبيعة:</span><span class="content">${a.nature}</span></div><div class="articulation-row"><span class="label">الجهر/الهمس:</span><span class="content">${a.voice}</span></div></div>`;}).filter(Boolean);return`<div class="articulation-layer" id="articulation-layer-box"><div class="articulation-layer-header"><div class="title"><span>🔊</span> مخارج «${mv.word}»</div><button class="close" onclick="toggleArticulation(false)">✕</button></div>${blocks.join('')}</div>`;}};
+function toggleArticulation(f){const output=document.getElementById('analysis-output');if(!output||!currentAnalysis){showToast('⚠️');return;}const btn=document.getElementById('articul-btn');const ex=document.getElementById('articulation-layer-box');const show=(f===undefined)?!ex:f;if(!show){if(ex)ex.remove();if(btn)btn.classList.remove('active');return;}if(ex)ex.remove();const w=document.createElement('div');w.innerHTML=AI_ARTICULATION.renderHTML(currentAnalysis);if(w.firstElementChild)output.appendChild(w.firstElementChild);if(btn)btn.classList.add('active');setTimeout(()=>{const b=document.getElementById('articulation-layer-box');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+
+/* ═══ AI_EXPLAINER ═══ */
+const AI_EXPLAINER={
+simpleConcept(letter){const m={'أ':'نقطة الصفر.','ب':'فقاعة تنفجر.','ت':'مغناطيس.','ث':'إبطاء سيارة.','ج':'شخص مستقل.','ح':'ارتفاع حرارة.','خ':'إغلاق صنبور.','د':'قذيفة مدفع.','ذ':'غبار يستقرّ.','ر':'نبض القلب.','ز':'انزلاق.','س':'تسلّل قطّة.','ش':'شجرة تتفرّع.','ص':'عجينة تُشكَّل.','ض':'قبضة يد.','ط':'طيّ ورقة.','ظ':'شمس تشرق.','ع':'كشف غطاء.','غ':'دخان يعود.','ف':'انفجار.','ق':'سهم بغاية.','ك':'كتل متشابهة.','ل':'لصق ورق.','م':'إغلاق قوس.','ن':'بذرة تنبت.','هـ':'علامة تعجّب.','و':'علامة وقوف.','ي':'خط لا ينتهي.'};return m[letter]||'—';},
+scholarlyConcept(letter){const c=CORE[letter];if(!c)return'';const ax=c.axes;const p=v=>Math.round((v+1)*50);return`الحركة: «${c.movement}». المحاور: اتجاه ${p(ax.direction)}% · ترابط ${p(ax.cohesion)}% · تعاظم ${p(ax.intensity)}% · ظهور ${p(ax.visibility)}% · زمان ${p(ax.time)}%.`;},
+letterDeepAnswer(letter){const ch=letter;const l=DIVINE_LEVELS[ch];if(!l)return'';const core=CORE[ch];const a=VOCAL_ARTICULATION[ch];const at=LETTER_ATTRS[ch];const lines=[];lines.push(`📖 تحليل مفرد لحرف «${ch}» — أربع طبقات بنيوية و22 حقلًا:`);lines.push('');lines.push(`① الحركة البنيوية: ${l.movement}`);lines.push(`   المصدر: ${core.source}.`);if(at){lines.push('');lines.push(`📊 الجدول الشامل:`);lines.push(`   • الترتيب: ${at.n} · أبجد: ${at.abjad} · الإسقاط: ${at.abjadVal}`);lines.push(`   • الاسم عند الإمام عليّ (ع): ${at.ali}`);lines.push(`   • الاسم عند الإمام الرضا (ع): ${at.reza}`);lines.push(`   • الدرجة: ${at.degree} · البرج: ${at.zodiac} · المنزلة: ${at.mansion}`);lines.push(`   • ${at.polarity} · ${at.light} · ${at.gender} · اتجاه ${at.direction}`);lines.push(`   • الطبع (أبجد): ${at.tabAbjad} · الطبع (أيقغ): ${at.tabAyqagh} · إسقاط أيقغ: ${at.ayqaghVal}`);lines.push(`   • الكوكب: ${at.planet} · الوزن: ${at.weight} · ${at.beauty} · ${at.fortune} · ${at.speech}`);lines.push(`   • الشفا: ${at.healing} · التسخير: ${at.subjugation}`);}if(a&&a.place!=='—'){lines.push('');lines.push(`② المخرج الصوتيّ: ${a.name} — ${a.place}.`);lines.push(`   ${a.nature} · ${a.voice} · ${a.strength} · مجموعة ${a.group}.`);}lines.push('');lines.push(`③ التصوّر الوجوديّ: ${l.conceptual}`);lines.push('');lines.push(`④ الكيفية: ${l.modality}`);lines.push('');lines.push(`⑤ الاسم الإلهيّ المطابق: ${l.divineLink}`);lines.push('');lines.push(`⑥ التوليف: ${l.synthesis}`);lines.push('');lines.push(`⚠️ الربط بين الحركة والاسم اجتهاديّ وصفيّ، لا يُبنى عليه حكم قرآنيّ.`);return lines.join('\n');},
+storyline(mv){if(mv.letters.length===1)return`حرف واحد «${mv.letters[0]}»: ${CORE[mv.letters[0]].movement}.`;const f=mv.contributions[0],l=mv.contributions[mv.contributions.length-1];const m=mv.contributions.slice(1,-1);let s=`يبدأ من «${f.ch}» — ${f.core.movement} (منشأ)، `;if(m.length)s+=`ثمّ `+m.map(x=>`«${x.ch}» (${x.core.movement})`).join('، ')+`، `;s+=`وينتهي بـ «${l.ch}» — ${l.core.movement} (نتيجة).`;return s;},
+whyThisOrder(mv){if(mv.letters.length<2)return'حرف واحد.';const f=mv.contributions[0],l=mv.contributions[mv.contributions.length-1];return`① «${f.ch}» المنشأ.\n② «${l.ch}» النتيجة (معامل النهاية ${mv.finalFactor.toFixed(2)}).\n③ القاعدة السادسة: الترتيب جزء من المعنى.`;},
+whyNotSynonym(){return`المنهج يرفض الترادف. اختلاف التسلسل = اختلاف الحركة = اختلاف المعنى.`;},
+evidence(mv){const lines=['① كلّ حرف له حركة مخصوصة.'];mv.contributions.forEach((c,i)=>lines.push(`② ${i+1}. «${c.ch}» — ${c.core.movement}. وزنه ${Math.round(c.weight*100)}%.`));lines.push(`③ المحصّلة: «${mv.sentence}».`);if(mv.ks)lines.push(`④ الشاهد: ${mv.ks.text} (${mv.ks.source}).`);lines.push(`⚠️ استدلالٌ بمنهج اللغة الموحّدة.`);return lines.join('\n');},
+levelSynthesis(mv){const parts=mv.letters.map(ch=>{const l=DIVINE_LEVELS[ch];return l?`«${ch}»: ${l.synthesis}`:'';}).filter(Boolean);return`🎚️ الطبقات لتسلسل «${mv.word}»:\n${parts.join('\n\n')}\n\n⚠️ اجتهاديّ وصفيّ.`;},
+quranicContext(mv){const occ=QURANIC_OCCURRENCES[mv.word]||[];if(!occ.length&&!(mv.ks&&mv.ks.quran))return'لم يُوثَّق.';const lines=[];if(occ.length){lines.push(`📍 موارد (${occ.length}):`);occ.forEach(v=>lines.push(`• ${v.ref}: ${v.text}`));}if(mv.ks&&mv.ks.quran)lines.push(`📖 عند النيليّ: ${mv.ks.quran}`);return lines.join('\n');},
+articulationSynthesis(mv){return mv.letters.map(ch=>{const a=VOCAL_ARTICULATION[ch];return a?`🔊 «${ch}»: ${a.name} — ${a.place}`:'';}).filter(Boolean).join('\n');},
+methodology(){return`المنهج اللفظي — ستّ قواعد:\n① لا ترادف.\n② ثبات المعنى.\n③ إبطال التقديرات.\n④ إبطال تغيير الترتيب.\n⑤ إبطال المجاز.\n⑥ القراءة الواحدة.`;},
+aboutNili(){return`عالم سبيط النيلي (رحمه الله) — واضع منهج «النظام القرآني». مؤلفاته: «النظام القرآني»، «اللغة الموحّدة»، «نظام المجموعات».`;}};
+
+/* ═══ AI_DIALOG ═══ */
+const LETTER_NAMES={'ألف':'أ','الألف':'أ','الف':'أ','باء':'ب','الباء':'ب','تاء':'ت','التاء':'ت','ثاء':'ث','الثاء':'ث','جيم':'ج','الجيم':'ج','حاء':'ح','الحاء':'ح','خاء':'خ','الخاء':'خ','دال':'د','الدال':'د','ذال':'ذ','الذال':'ذ','راء':'ر','الراء':'ر','زاي':'ز','الزاي':'ز','سين':'س','السين':'س','شين':'ش','الشين':'ش','صاد':'ص','الصاد':'ص','ضاد':'ض','الضاد':'ض','طاء':'ط','الطاء':'ط','ظاء':'ظ','الظاء':'ظ','عين':'ع','العين':'ع','غين':'غ','الغين':'غ','فاء':'ف','الفاء':'ف','قاف':'ق','القاف':'ق','كاف':'ك','الكاف':'ك','لام':'ل','اللام':'ل','ميم':'م','الميم':'م','نون':'ن','النون':'ن','هاء':'هـ','الهاء':'هـ','واو':'و','الواو':'و','ياء':'ي','الياء':'ي'};
+function extractLetter(q){for(const n in LETTER_NAMES){if(q.includes(n))return LETTER_NAMES[n];}return null;}
+const AI_DIALOG={answer(question,mv){if(!mv)return'اكتب تسلسلًا.';const q=(question||'').trim();if(!q)return'اكتب سؤالك.';const ml=extractLetter(q);if(ml&&DIVINE_LEVELS[ml]&&/لماذا|كيف|ما |اشرح|بيّن|وضّح|خصوص|خاص|ميز|فرد|علة|عله|مادة|ماده|جامع|معنى|حركة|تأليف|علّة|الحسنى|الأسماء|الاسماء|إلهي|الهي|حيثي|طبقة|طبقات/.test(q)){return AI_EXPLAINER.letterDeepAnswer(ml);}if(/ما (هو|معنى|حركة|المعنى)|اشرح|وضّح|بيّن|فسّر|ماذا يعني/.test(q))return AI_EXPLAINER.storyline(mv);if(/لماذا.*(أوّل|منشأ)/.test(q)){const f=mv.contributions[0];return`«${f.ch}» المنشأ. ${f.core.movement}.`;}if(/نتيجة|نهاية|آخر/.test(q)){const l=mv.contributions[mv.contributions.length-1];return`«${l.ch}» النتيجة (معامل النهاية ${mv.finalFactor.toFixed(2)}). ${l.core.movement}.`;}if(/ترتيب|تسلسل/.test(q))return AI_EXPLAINER.whyThisOrder(mv);if(/حجّة|دليل|برهان|إثبات/.test(q))return AI_EXPLAINER.evidence(mv);if(/مرادف|ترادف/.test(q))return AI_EXPLAINER.whyNotSynonym(mv);if(/بسيط|مبسّط|سهل|يومي/.test(q))return mv.contributions.map(c=>`«${c.ch}» — ${AI_EXPLAINER.simpleConcept(c.ch)}`).join('\n');if(/عميق|تفصيل|متخصّص|بعمق/.test(q))return mv.contributions.map(c=>AI_EXPLAINER.scholarlyConcept(c.ch)).join('\n\n');if(/طبقة|طبقات|بنية|بنيوية|مستوى|مستويات/.test(q))return AI_EXPLAINER.levelSynthesis(mv);if(/حيثي|حيثيات|متكامل/.test(q)){const lines=[];mv.letters.forEach(ch=>{const d=DIVINE_ASPECTS[ch];if(d){lines.push(`• «${ch}»:`);d.aspects.forEach(a=>lines.push(`  - ${a.label}: ${a.text}`));lines.push(`  ⤷ ${d.unified}`);}});return lines.join('\n');}if(/اسم|أسماء|إلهي/.test(q)){const lines=[];mv.letters.forEach(ch=>{const at=LETTER_ATTRS[ch];if(at){lines.push(`• «${ch}» — الإمام عليّ: ${at.ali}`);lines.push(`  الإمام الرضا: ${at.reza}`);}});return lines.join('\n');}if(/جدول|شامل|بيانات|حقول/.test(q)){const lines=[];mv.letters.forEach(ch=>{const at=LETTER_ATTRS[ch];if(at){lines.push(`• «${ch}»: برج ${at.zodiac} · منزلة ${at.mansion} · ${at.polarity} · ${at.light} · ${at.gender} · اتجاه ${at.direction} · كوكب ${at.planet} · ${at.beauty} · ${at.fortune} · ${at.speech}`);}});return lines.join('\n');}if(/سرد|نيلي|طبقة ذكية|11 خطوة|روابط/.test(q)){const r=composeNarrative11(mv);return`📜 السرد النيليّ — ${mv.word} · ${r.grade} (${r.score}/4)\nعدد الخطوات: ${r.steps.filter(x=>x.type==='step').length}\nعدد الروابط: ${r.steps.filter(x=>x.type==='link').length}\nعدد النبرات: ${r.steps.filter(x=>x.type==='step'&&x.tone).length}`;}if(/قرآن|آية|ورد في|أين|سياق/.test(q))return AI_EXPLAINER.quranicContext(mv);if(/مخرج|مخارج|صوت|نطق/.test(q))return AI_EXPLAINER.articulationSynthesis(mv);if(/منهج|اللغة الموحّدة|قواعد/.test(q))return AI_EXPLAINER.methodology();if(/النيلي|المؤلف|الكتاب/.test(q))return AI_EXPLAINER.aboutNili();if(/سرعة|بطيء|سريع/.test(q)){const sp=Math.round(mv.speed*100);const v=sp<30?'بطيئة':sp<70?'متوسطة':'سريعة';return`السرعة = ${sp}% — ${v}.`;}if(/تبديل|تباديل/.test(q))return`عدد التباديل: ${mv.uniquePermutations}.`;return'جرّب:\n• «ما معنى هذا؟»\n• «ما الطبقات البنيوية؟»\n• «لماذا حرف الباء؟»\n• «ما الأسماء الإلهية؟»\n• «ما الجدول الشامل؟»\n• «اعرض السرد النيليّ»\n• «أين ورد؟»';}};
+
+const AI_CHAT={init(){this.renderSuggestions();this.renderWelcome();},suggestions(){return['ما معنى هذا التسلسل؟','اشرح بالبسيط','اشرح بعمق','ما الطبقات البنيوية؟','لماذا حرف الباء؟','اعرض السرد النيليّ','ما الجدول الشامل؟','أين ورد؟'];},renderSuggestions(){const box=document.getElementById('chat-suggestions');if(!box)return;box.innerHTML=this.suggestions().map(s=>`<button class="chat-chip" onclick="AI_CHAT.send('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('');},renderWelcome(){const box=document.getElementById('chat-messages');if(!box)return;box.innerHTML='';this.append('ai','مرحبًا. أنا محاور التسلسل — لا مُفسّر.\nكلّ ما أقوله مستخرج من المصفوفة الـ28، والطبقات البنيوية تجمع الحركة والتصوّر والكيفية والاسم الإلهيّ.');},send(text){const input=document.getElementById('chat-input');if(text===undefined){text=input?.value.trim();if(!text)return;if(input)input.value='';}if(!currentAnalysis){this.append('ai','⚠️ اكتب تسلسلًا.');return;}this.append('user',text);this.append('ai',AI_DIALOG.answer(text,currentAnalysis));},append(role,text){const box=document.getElementById('chat-messages');if(!box)return;const div=document.createElement('div');div.className=`chat-msg chat-${role}`;const safe=(text||'').replace(/</g,'&lt;').replace(/\n/g,'<br>');div.innerHTML=`<div class="chat-bubble">${safe}</div>`;box.appendChild(div);box.scrollTop=box.scrollHeight;},reset(){this.renderWelcome();}};
+
+/* ═══ SHOW SCREEN ═══ */
+function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById('screen-'+name);if(el)el.classList.add('active');document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.dataset.screen===name));window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='sequences')renderSequences();
+  if(name==='history')renderHistory();
+  if(name==='stats'){renderPersonalStats();renderHeatmap();renderCalendar();renderRecommendations();setTimeout(initSphere,100);}
+  if(name==='manifestations'){renderManifestations();renderMarkers();}
+  if(name==='doors')renderDoors();
+  if(name==='groups'){renderGroups();renderNumbers();renderApparatus();}
+  if(name==='contrasts')renderContrasts();
+  if(name==='translation')renderTranslation();
+  if(name==='protection')renderProtection();
+  if(name==='particles')renderParticles();
+  if(name==='divine')renderDivineFull();
+  if(name==='articulation')renderArticulationFull();
+  if(name==='levels')renderLevelsFull();
+  if(name==='attrs')renderAttrsFull();
+}
+
+function renderLevelsFull(){const c=document.getElementById('levels-content');if(!c)return;const keys=['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','و','هـ','ي'];c.innerHTML=keys.map(ch=>AI_LEVELS.renderLetter(ch)).join('');}
+
+/* ═══ RENDER_ATTRS ═══ */
+function renderAttrsFull(){
+  const c=document.getElementById('attrs-content');if(!c)return;
+  const keys=['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','هـ','و','ي'];
+  c.innerHTML=keys.map(ch=>{
+    const a=LETTER_ATTRS[ch];if(!a)return '';
+    const pillar=CORE[ch]||{};
+    return `<div class="card" style="border-inline-start:4px solid ${pillar.tier==='green'?'var(--green)':'var(--yellow)'};">
+      <div class="card-title" style="justify-content:space-between;">
+        <span style="display:flex;gap:10px;align-items:center;">
+          <span style="font-family:var(--font-serif);font-size:2rem;color:var(--navy);">${ch}</span>
+          <span style="font-size:.8rem;color:var(--ink-muted);">#${a.n} · أبجد ${a.abjad} · ${a.zodiac} · ${a.mansion}</span>
+        </span>
+        <span class="tier-badge ${pillar.tier==='green'?'tier-green':'tier-yellow'}">${a.polarity} · ${a.light}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
+        <div class="aspect-card" style="border-inline-start-color:#10B981;">
+          <div class="aspect-label">🕌 اسم الإمام عليّ (ع)</div>
+          <div class="aspect-text" style="font-family:var(--font-serif);">${a.ali}</div>
+        </div>
+        <div class="aspect-card" style="border-inline-start-color:#8B5CF6;">
+          <div class="aspect-label">🕌 اسم الإمام الرضا (ع)</div>
+          <div class="aspect-text" style="font-family:var(--font-serif);">${a.reza}</div>
+        </div>
+      </div>
+      <div class="axes-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
+        <div class="axis-cell"><span class="k">الدرجة</span><span class="v">${a.degree}</span></div>
+        <div class="axis-cell"><span class="k">الجنس</span><span class="v">${a.gender}</span></div>
+        <div class="axis-cell"><span class="k">الاتجاه</span><span class="v">${a.direction}</span></div>
+        <div class="axis-cell"><span class="k">الطبع (أبجد)</span><span class="v">${a.tabAbjad}</span></div>
+        <div class="axis-cell"><span class="k">الطبع (أيقغ)</span><span class="v">${a.tabAyqagh}</span></div>
+        <div class="axis-cell"><span class="k">إسقاط أبجد</span><span class="v">${a.abjadVal}</span></div>
+        <div class="axis-cell"><span class="k">إسقاط أيقغ</span><span class="v">${a.ayqaghVal}</span></div>
+        <div class="axis-cell"><span class="k">الكوكب</span><span class="v">${a.planet}</span></div>
+        <div class="axis-cell"><span class="k">الوزن</span><span class="v">${a.weight}</span></div>
+        <div class="axis-cell"><span class="k">جمالي/جلالي</span><span class="v">${a.beauty}</span></div>
+        <div class="axis-cell"><span class="k">سعد/نحس</span><span class="v">${a.fortune}</span></div>
+        <div class="axis-cell"><span class="k">ناطق/صامت</span><span class="v">${a.speech}</span></div>
+        <div class="axis-cell"><span class="k">حروف الشفا</span><span class="v">${a.healing}</span></div>
+        <div class="axis-cell"><span class="k">حروف التسخير</span><span class="v">${a.subjugation}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function analyze(word){try{showScreen('analysis');const out=document.getElementById('analysis-output');out.innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري الاستخراج...</div></div>`;const mv=extractMovement(word);if(!mv){out.innerHTML=`<div class="error-box">⚠️ لم أتعرّف على أي حرف.</div>`;return;}safeReplaceState('?w='+encodeURIComponent(mv.word));saveHistoryItem(mv);out.innerHTML=renderAnalysis(mv);setTimeout(()=>{if(typeof AI_CHAT!=='undefined')AI_CHAT.init();},150);}catch(e){console.error(e);}}
+
+function renderAnalysis(mv){currentAnalysis=mv;const sp=Math.round(mv.speed*100);const sv=sp<30?'بطيئة (مكانيَّة)':sp<70?'متوسطة':'سريعة (زمانيَّة)';const timeline=mv.contributions.map(c=>`<div class="tl-node-wrap"><span class="tl-role-badge role-mini ${c.role.cls}">${c.role.short}</span><div class="tl-node role-${c.role.id}"><div class="tl-char">${c.ch}</div><div class="tl-label">${c.core.movement}</div></div></div>`).join('<div class="tl-arrow">⟵</div>');const permCards=mv.permutations.slice(0,24).map(perm=>{const pw=perm.join(''),io=pw===mv.word;return`<div class="perm-card ${io?'original':''}">${io?'<span class="perm-badge">★ المُدخَلة</span>':''}<div class="perm-word">${pw}</div><div class="perm-movement">${perm.map(ch=>CORE[ch].movement).join(' ← ')}</div></div>`;}).join('');
+  const hasLevels=mv.letters.some(ch=>DIVINE_LEVELS[ch]);const hasDivine=mv.letters.some(ch=>DIVINE_ASPECTS[ch]);const hasArticul=mv.letters.some(ch=>VOCAL_ARTICULATION[ch]&&VOCAL_ARTICULATION[ch].place!=='—');const hasLex=QURAN_LEXICON[mv.word];
+  const kSection=mv.ks?`<div class="card niu-card"><div class="card-title"><span class="icon">📖</span> نصّ النيلي الموثّق</div><div style="font-family:var(--font-serif);font-size:1rem;line-height:2;color:#5A4210;">${mv.ks.text}</div>${mv.ks.lexicon?`<div style="margin-top:12px;padding-top:12px;border-top:1px dashed #C9A961;"><strong>📚 المعجم:</strong> ${mv.ks.lexicon}</div>`:''}${mv.ks.quran?`<div style="margin-top:12px;padding-top:12px;border-top:1px dashed #C9A961;"><strong>📖 التنزيل:</strong> ${mv.ks.quran}</div>`:''}<div style="font-size:.82rem;color:#7A5A1A;margin-top:12px;font-style:italic;">— ${mv.ks.source}</div></div>`:'';
+  return`
+  <div class="analysis-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;background:var(--bg-soft);border-radius:14px;border:1px solid var(--border);">
+    <button class="action-btn" onclick="exportPDF()" style="background:var(--navy);color:#fff;padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;">🖨️ PDF</button>
+    <button class="action-btn" onclick="exportJSON()" style="background:var(--card);border:1px solid var(--border);padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--navy);">📥 JSON</button>
+    <button class="action-btn" onclick="copyAnalysis()" style="background:var(--card);border:1px solid var(--border);padding:8px 14px;border-radius:20px;font-size:.85rem;font-weight:700;color:var(--navy);">📋 نسخ</button>
+    <button class="narrative-btn" id="narrative-btn" onclick="toggleNarrative11()">📜 السرد النيليّ</button>
+    ${hasLevels?`<button class="levels-btn" id="levels-btn" onclick="toggleLevels()">🎚️ الطبقات البنيوية</button>`:''}
+    ${hasDivine?`<button class="divine-btn" id="divine-btn" onclick="toggleDivine()">✨ الطبقة الاسمائية</button>`:''}
+    <button class="quran-btn" id="quran-btn" onclick="toggleQuran()">📍 أين ورد؟</button>
+    ${hasArticul?`<button class="articul-btn" id="articul-btn" onclick="toggleArticulation()">🔊 المخارج</button>`:''}
+  </div>
+  <div class="movement-main"><div class="label">✨ الحركة العامة</div><div class="value">${mv.sentence}</div>${mv.concept?`<div style="display:inline-block;background:var(--card);padding:6px 14px;border-radius:20px;font-size:.9rem;font-family:var(--font-serif);font-weight:700;color:var(--navy);margin-top:10px;">المفهوم: ${mv.concept}</div>`:''}${hasLex?`<div style="display:inline-block;background:var(--green-soft);padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;color:#065F46;margin-top:10px;border:1px solid var(--green);">✅ موثَّق في القاعدة</div>`:''}<div class="words-row">${mv.contributions.map(c=>`<span class="word-tag"><span class="tier-dot"></span>${c.ch}<span class="role-mini ${c.role.cls}">${c.role.short}</span></span>`).join('')}</div></div>
+  <div class="card"><div class="card-title"><span class="icon">🔧</span> التفكيك</div><div style="background:var(--gold-soft);padding:14px;border-radius:8px;font-family:var(--font-serif);font-size:1.05rem;color:var(--navy);text-align:center;border:1px solid var(--gold);">${mv.breakdown}</div></div>
+  <div class="card"><div class="card-title"><span class="icon">🎯</span> البصمة البصرية</div><div class="radar-wrap">${renderRadar(mv.axes)}</div><div class="axes-grid"><div class="axis-cell"><span class="k">🧭</span><span class="v">${pct(mv.axes.direction)}</span></div><div class="axis-cell"><span class="k">🧩</span><span class="v">${pct(mv.axes.cohesion)}</span></div><div class="axis-cell"><span class="k">🔥</span><span class="v">${pct(mv.axes.intensity)}</span></div><div class="axis-cell"><span class="k">👁</span><span class="v">${pct(mv.axes.visibility)}</span></div><div class="axis-cell"><span class="k">⏳</span><span class="v">${pct(mv.axes.time)}</span></div></div></div>
+  <div class="card"><div class="card-title"><span class="icon">⏱</span> خطّ الزمن</div><div class="timeline">${timeline}</div></div>
+  <div class="card"><div class="card-title"><span class="icon">🚀</span> السرعة</div><div class="speed-bar-wrap"><div class="speed-bar"><div class="speed-marker" style="left:${sp}%;"></div></div><div class="speed-value">${sp}%</div><div class="speed-verdict">${sv}</div></div></div>
+  ${mv.permutations.length>1?`<div class="card"><div class="card-title"><span class="icon">🔀</span> التباديل</div><div class="perm-grid">${permCards}</div></div>`:''}
+  ${kSection}
+  <div class="chat-box" id="chat-box"><div class="chat-header"><span>💬 محاورة التسلسل</span><small>اسأل عن المعنى · الطبقات · السرد النيليّ · الجدول</small></div><div class="chat-messages" id="chat-messages"></div><div class="chat-suggestions" id="chat-suggestions"></div><div class="chat-input-row"><input type="text" id="chat-input" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter'){event.preventDefault();AI_CHAT.send();}"><button onclick="AI_CHAT.send()">إرسال</button></div></div>`;
+}
+
+function toggleNarrative(f){const output=document.getElementById('analysis-output');if(!output||!currentAnalysis){showToast('⚠️');return;}const btn=document.getElementById('narrative-btn');const ex=document.getElementById('narrative-report-box');const show=(f===undefined)?!ex:f;if(!show){if(ex)ex.remove();if(btn)btn.classList.remove('active');return;}if(ex)ex.remove();const w=document.createElement('div');w.innerHTML=AI_COMPOSER.renderHTML(currentAnalysis);output.appendChild(w.firstElementChild);if(btn)btn.classList.add('active');setTimeout(()=>{const b=document.getElementById('narrative-report-box');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+
+function renderSequences(){const c=document.getElementById('sequences-list');if(!c)return;const allKeys=Object.keys(KS_DATA).sort((a,b)=>a.localeCompare(b,'ar'));const total=allKeys.length;document.getElementById('seq-total').textContent=total;document.getElementById('seq-badge').textContent=total;document.getElementById('footer-seq-count').textContent=total;c.innerHTML=`<div class="seq-count">${total} تسلسلًا</div>`+allKeys.map(k=>{const d=KS_DATA[k];return`<div class="seq-item" data-word="${k}"><div class="seq-word">${k}</div><div class="seq-text">${(d.text||'').substring(0,200)}</div><div class="seq-source">— ${d.source||''}</div></div>`;}).join('');c.querySelectorAll('.seq-item').forEach(el=>el.addEventListener('click',()=>{document.getElementById('word-input').value=el.dataset.word;analyze(el.dataset.word);}));}
+function renderDivineFull(){const c=document.getElementById('divine-layer-full');if(!c)return;c.innerHTML=Object.keys(CORE).map(ch=>{const d=DIVINE_ASPECTS[ch];if(!d)return'';return`<div class="card"><div class="card-title"><span style="font-family:var(--font-serif);font-size:1.8rem;">${ch}</span> ${CORE[ch].movement}</div><div class="aspects-grid">${d.aspects.map(a=>`<div class="aspect-card"><div class="aspect-label">${a.label}</div><div class="aspect-text">${a.text}</div></div>`).join('')}</div><div class="divine-row" style="background:#EDE9FE;border-radius:6px;padding:10px;margin-top:10px;"><span class="label">🕊️ التوليف:</span><span class="content">${d.unified}</span></div></div>`;}).join('');}
+function renderArticulationFull(){const c=document.getElementById('articulation-content');if(!c)return;c.innerHTML=Object.keys(VOCAL_ARTICULATION).map(ch=>{const a=VOCAL_ARTICULATION[ch];return`<div class="articulation-block"><div class="articulation-head"><div class="articulation-glyph">${ch}</div><div class="articulation-name">${a.name}</div></div><div class="articulation-row"><span class="label">المخرج:</span><span class="content">${a.place}</span></div><div class="articulation-row"><span class="label">الطبيعة:</span><span class="content">${a.nature}</span></div></div>`;}).join('');}
+function renderContrasts(){const c=document.getElementById('contrasts-content');if(!c)return;c.innerHTML=LETTER_CONTRASTS.map(x=>`<div class="metric-card" style="border-inline-start:4px solid var(--gold);"><div class="metric-header"><span class="metric-label">${x.title}</span><span style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--navy);">${x.pair[0]} / ${x.pair[1]}</span></div><div class="metric-detail" style="margin-top:8px;">${x.note}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;"><div style="background:var(--purple-soft);padding:10px;border-radius:8px;"><strong style="color:var(--navy);font-family:var(--font-serif);font-size:1.2rem;">${x.pair[0]}</strong><div style="margin-top:5px;font-size:.85rem;">${x.a}</div></div><div style="background:var(--teal-soft);padding:10px;border-radius:8px;"><strong style="color:var(--navy);font-family:var(--font-serif);font-size:1.2rem;">${x.pair[1]}</strong><div style="margin-top:5px;font-size:.85rem;">${x.b}</div></div></div></div>`).join('');}
+function renderManifestations(){const c=document.getElementById('manifestations-content');if(!c)return;c.innerHTML=`<div class="perm-grid">${Object.entries(MANIFESTATIONS).map(([ch,m])=>`<div class="perm-card original" style="border-color:${m.color}"><div class="perm-badge" style="color:${m.color}">${m.role}</div><div class="perm-word" style="color:${m.color}">${ch}</div><div style="font-weight:700;color:var(--navy);text-align:center;">${m.name}</div><div class="perm-movement" style="margin-top:8px;">${m.description}</div></div>`).join('')}</div>`;}
+function renderMarkers(){const c=document.getElementById('markers-content');if(!c)return;c.innerHTML=`<div class="perm-grid">${Object.entries(SPACETIME_MARKERS).map(([sym,m])=>`<div class="perm-card" style="border-color:${m.color}"><div class="perm-badge" style="color:${m.color}">${m.name}</div><div class="perm-word" style="color:${m.color};font-size:2.2rem;">${sym}</div><div style="font-weight:700;color:var(--navy);text-align:center;">${m.symbol} — ${m.meaning}</div><div class="perm-movement" style="margin-top:8px;">${m.effect}</div></div>`).join('')}</div>`;}
+function renderDoors(){const c=document.getElementById('doors-content');if(!c)return;c.innerHTML=SIX_DOORS.map(d=>`<div class="metric-card" style="border-inline-start:4px solid var(--navy);"><div class="metric-header"><span class="metric-label">الباب ${d.id}: ${d.past} — ${d.present}</span><span style="font-family:var(--font-serif);font-size:1.05rem;font-weight:700;">${d.example}</span></div><div class="metric-detail" style="margin-top:8px;">${d.note}</div></div>`).join('');}
+function renderGroups(){const c=document.getElementById('groups-content');if(!c)return;c.innerHTML=`<div class="perm-grid">${SEVEN_GROUPS.map(g=>`<div class="perm-card"><div class="perm-badge">المجموعة ${g.n}</div><div class="perm-word" style="font-size:2rem;letter-spacing:6px;">${g.letters.join(' ')}</div><div style="font-weight:700;color:var(--navy);text-align:center;">${g.name}</div><div class="perm-movement">${g.desc}</div></div>`).join('')}</div>`;}
+function renderNumbers(){const c=document.getElementById('numbers-content');if(!c)return;c.innerHTML=`<div class="info-grid">${NUMERICAL_RELATIONS.map(r=>`<div class="info-cell"><div class="v" style="font-size:1.8rem;">${r.n}</div><div class="k">${r.meaning}</div></div>`).join('')}</div>`;}
+function renderApparatus(){const c=document.getElementById('apparatus-content');if(!c)return;const A=VOCAL_APPARATUS;c.innerHTML=`<div class="perm-grid">${A.centers.map(ct=>`<div class="perm-card"><div class="perm-badge">مركز ${ct.id}</div><div class="perm-word" style="font-size:1.4rem;">${ct.name}</div><div class="perm-movement">${ct.role}</div></div>`).join('')}</div><div class="card" style="margin-top:14px;"><div style="padding:10px;background:var(--yellow-soft);border-radius:8px;">⚠️ 32 - 4 = 28</div><div style="margin-top:12px;padding:12px;background:var(--teal-soft);border-radius:8px;">${A.note}</div></div>`;}
+function renderTranslation(){const c=document.getElementById('translation-content');if(!c)return;c.innerHTML=INTENTIONAL_TRANSLATIONS.map(t=>`<div class="metric-card"><div class="metric-header"><div style="display:flex;gap:14px;"><span style="font-size:1.3rem;font-weight:700;color:var(--navy);font-family:var(--font-serif);">${t.ar}</span><span style="color:var(--ink-muted);">≈</span><span style="font-size:1.1rem;font-weight:700;color:var(--gold);font-family:var(--font-serif);">${t.en}</span></div></div><div class="metric-detail">${t.note}</div></div>`).join('');}
+function renderProtection(){const c=document.getElementById('protection-content');if(!c)return;const S=SELF_PROTECTION;c.innerHTML=`<div class="metric-card" style="background:var(--gold-soft);"><div class="metric-label">🛡️</div><div style="margin-top:8px;">${S.desc}</div></div><div class="card" style="margin-top:14px;"><strong>الآليات:</strong>${S.mechanisms.map((m,i)=>`<div style="padding:10px;background:var(--card);border-radius:8px;margin-top:8px;border-inline-start:3px solid var(--green);">${i+1}. ${m}</div>`).join('')}</div>`;}
+function renderParticles(){const c=document.getElementById('particles-content');if(!c)return;c.innerHTML=`<div class="perm-grid">${UNIFIED_PARTICLES.map(p=>`<div class="perm-card"><div class="perm-word">${p.word}</div><div class="perm-movement" style="font-weight:600;">${p.meaning}</div><div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);font-size:.78rem;color:var(--ink-muted);font-family:var(--font-serif);">«${p.evidence}»</div></div>`).join('')}</div>`;}
+function renderLetters(){const g=document.getElementById('letters-grid');if(!g)return;g.innerHTML=Object.keys(CORE).map(ch=>{const c=CORE[ch];return`<div class="letter-cell" data-tier="${c.tier}" data-letter="${ch}"><div class="glyph">${ch}</div><div class="movement">${c.movement}</div></div>`;}).join('');g.querySelectorAll('.letter-cell').forEach(cell=>cell.addEventListener('click',()=>renderLetterDetail(cell.dataset.letter)));}
+function renderLetterDetail(ch){const c=CORE[ch];if(!c)return;const tl=c.tier==='green'?'🟢 ج1':'🟡 ج2';const tc=c.tier==='green'?'tier-green':'tier-yellow';const l=DIVINE_LEVELS[ch];const a=VOCAL_ARTICULATION[ch];const at=LETTER_ATTRS[ch];document.getElementById('letter-detail').innerHTML=`<div class="card"><div class="card-title"><span style="font-family:var(--font-serif);font-size:2rem;">${ch}</span><span class="tier-badge ${tc}">${tl}</span></div><p class="card-sub">${c.source}</p><div style="background:var(--gold-soft);padding:14px;border-radius:8px;border:1px solid var(--gold);margin-bottom:14px;"><div style="font-size:.78rem;color:#7A5A1A;font-weight:700;">الحركة</div><div style="font-size:1.15rem;color:var(--navy);font-weight:700;font-family:var(--font-serif);">${c.movement}</div></div></div>${l?AI_LEVELS.renderLetter(ch):''}${at?`<div class="card" style="border-inline-start:4px solid var(--gold);"><div class="card-title"><span class="icon">📊</span> الجدول الشامل — 22 حقلًا</div>
+<div class="axes-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
+<div class="axis-cell"><span class="k">الترتيب</span><span class="v">#${at.n}</span></div>
+<div class="axis-cell"><span class="k">أبجد</span><span class="v">${at.abjad}</span></div>
+<div class="axis-cell"><span class="k">الدرجة</span><span class="v">${at.degree}</span></div>
+<div class="axis-cell"><span class="k">البرج</span><span class="v">${at.zodiac}</span></div>
+<div class="axis-cell"><span class="k">المنزلة</span><span class="v">${at.mansion}</span></div>
+<div class="axis-cell"><span class="k">علوي/سفلي</span><span class="v">${at.polarity}</span></div>
+<div class="axis-cell"><span class="k">نوراني/ظلماني</span><span class="v">${at.light}</span></div>
+<div class="axis-cell"><span class="k">ذكر/أنثى</span><span class="v">${at.gender}</span></div>
+<div class="axis-cell"><span class="k">الاتجاه</span><span class="v">${at.direction}</span></div>
+<div class="axis-cell"><span class="k">إسقاط أبجد</span><span class="v">${at.abjadVal}</span></div>
+<div class="axis-cell"><span class="k">الطبع (أبجد)</span><span class="v">${at.tabAbjad}</span></div>
+<div class="axis-cell"><span class="k">الطبع (أيقغ)</span><span class="v">${at.tabAyqagh}</span></div>
+<div class="axis-cell"><span class="k">إسقاط أيقغ</span><span class="v">${at.ayqaghVal}</span></div>
+<div class="axis-cell"><span class="k">الكوكب</span><span class="v">${at.planet}</span></div>
+<div class="axis-cell"><span class="k">الوزن</span><span class="v">${at.weight}</span></div>
+<div class="axis-cell"><span class="k">جمالي/جلالي</span><span class="v">${at.beauty}</span></div>
+<div class="axis-cell"><span class="k">سعد/نحس</span><span class="v">${at.fortune}</span></div>
+<div class="axis-cell"><span class="k">ناطق/صامت</span><span class="v">${at.speech}</span></div>
+<div class="axis-cell"><span class="k">حروف الشفا</span><span class="v">${at.healing}</span></div>
+<div class="axis-cell"><span class="k">حروف التسخير</span><span class="v">${at.subjugation}</span></div>
+</div>
+<div style="margin-top:12px;padding:12px;background:var(--bg-soft);border-radius:8px;">
+<div style="font-size:.8rem;color:#7A5A1A;font-weight:700;margin-bottom:6px;">🕌 اسم الإمام عليّ (ع):</div>
+<div style="font-family:var(--font-serif);font-size:1rem;color:var(--navy);line-height:2;">${at.ali}</div>
+<div style="font-size:.8rem;color:#5B21B6;font-weight:700;margin:10px 0 6px;">🕌 اسم الإمام الرضا (ع):</div>
+<div style="font-family:var(--font-serif);font-size:1rem;color:#4C1D95;line-height:2;">${at.reza}</div>
+</div>
+<div class="divine-warning" style="margin-top:12px;">⚠️ طبقة مرويّة — للاستئناس لا للاستدلال.</div>
+</div>`:''}${a&&a.place!=='—'?`<div class="articulation-layer"><div class="articulation-layer-header"><div class="title">🔊 المخرج</div></div><div class="articulation-block"><div class="articulation-head"><div class="articulation-glyph">${ch}</div><div class="articulation-name">${a.name}</div></div><div class="articulation-row"><span class="label">المخرج:</span><span class="content">${a.place}</span></div></div></div>`:''}`;}
+function renderRules(){const rl=document.getElementById('rules-list');if(rl)rl.innerHTML=RULES.map(r=>`<li style="display:flex;gap:12px;padding:12px;border-radius:8px;background:var(--bg-soft);margin-bottom:8px;border-inline-start:3px solid var(--navy);"><span style="font-weight:700;color:var(--navy);min-width:30px;font-family:var(--font-serif);">${r.id}</span><div style="flex:1;"><div>${r.text}</div><div style="font-size:.75rem;color:var(--ink-muted);margin-top:4px;font-style:italic;">${r.source}</div></div></li>`).join('');const cr=document.getElementById('critique-rules');if(cr)cr.innerHTML=CRITIQUE_RULES.map(r=>`<div style="display:flex;gap:12px;padding:10px;border-radius:8px;background:var(--bg-soft);margin-bottom:8px;border-inline-start:3px solid var(--gold);"><span style="font-weight:700;color:var(--navy);min-width:24px;">${r.n}.</span><span>${r.text}</span></div>`).join('');}
+function renderCompare(a,b){const A=extractMovement(a),B=extractMovement(b);const out=document.getElementById('compare-output');if(!out)return;if(!A||!B){out.innerHTML=`<div class="error-box">تعذّر.</div>`;return;}out.innerHTML=`<div class="compare-result"><div class="compare-col"><h4>${A.word}</h4><div class="compare-movement">${A.sentence}</div></div><div class="compare-col"><h4>${B.word}</h4><div class="compare-movement">${B.sentence}</div></div></div>`;}
+function renderRoot(word){const mv=extractMovement(word);const out=document.getElementById('root-output');if(!out)return;if(!mv||mv.letters.length<3){out.innerHTML=`<div class="info-box">ℹ️ تحتاج 3 حروف على الأقل.</div>`;return;}const rl=mv.letters.slice(0,3);const ds=generateDerivations(rl);const rc=rl.map((ch,i)=>{const r=getRole(i,3);return`<div class="root-letter"><div class="glyph">${ch}</div><div class="role">${r.label}</div><div class="label">${CORE[ch].movement}</div></div>`;}).join('');const dc=ds.map(d=>{const dmv=extractMovement(d.word);const kc=d.kind==='mujarrad'?'mujarrad':d.kind==='mazid2'?'mazid2':'mizid';return`<div class="deriv-card ${kc}"><div class="deriv-weight">${d.weight}</div><div class="deriv-word">${d.word}</div><div class="deriv-effect">${d.effect}</div><div class="deriv-movement"><span class="mv-text">${dmv?dmv.sentence:'—'}</span></div></div>`;}).join('');out.innerHTML=`<div class="card"><div class="card-title">🌳 الجذر</div><div class="root-letters">${rc}</div></div><div class="card"><div class="card-title">📚 الاشتقاق</div><div class="deriv-grid">${dc}</div></div>`;}
+
+/* Three.js */
+let sphereRenderer=null,sphereGroup=null,sphereCamera=null,sphereState={rotX:0,rotY:0,velX:0,velY:0,dragging:false,time:0};
+function initSphere(){try{const container=document.getElementById('sphere-container');if(!container)return;if(typeof THREE==='undefined'){container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--ink-muted);">كرة الحروف تحتاج اتصالًا بالإنترنت</div>`;return;}if(sphereRenderer){try{container.removeChild(sphereRenderer.domElement);}catch(e){}sphereRenderer=null;}const W=container.clientWidth,H=container.clientHeight;if(W===0||H===0){setTimeout(initSphere,200);return;}const scene=new THREE.Scene();scene.background=new THREE.Color(0xF4F4EC);const camera=new THREE.PerspectiveCamera(45,W/H,0.1,1000);camera.position.z=4.5;const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(W,H);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));container.insertBefore(renderer.domElement,container.firstChild);const group=new THREE.Group();scene.add(group);const letters=Object.keys(CORE);const N=letters.length;const positions=[];for(let i=0;i<N;i++){const phi=Math.acos(1-2*(i+0.5)/N);const theta=Math.PI*(1+Math.sqrt(5))*i;positions.push(new THREE.Vector3(Math.cos(theta)*Math.sin(phi),Math.sin(theta)*Math.sin(phi),Math.cos(phi)));}letters.forEach((ch,i)=>{const cv=document.createElement('canvas');cv.width=256;cv.height=256;const ctx=cv.getContext('2d');const isG=CORE[ch].tier==='green';ctx.fillStyle=isG?'#10B981':'#F59E0B';ctx.beginPath();ctx.arc(128,128,120,0,Math.PI*2);ctx.fill();ctx.fillStyle='#FFFFFF';ctx.font='bold 150px Amiri, serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ch,128,138);const tex=new THREE.CanvasTexture(cv);tex.anisotropy=8;const mat=new THREE.SpriteMaterial({map:tex,transparent:true});const spr=new THREE.Sprite(mat);spr.position.copy(positions[i].multiplyScalar(2.2));spr.scale.set(0.7,0.7,1);spr.userData={baseScale:0.7,phase:i*0.4};group.add(spr);});const lm=new THREE.LineBasicMaterial({color:0xC9A961,transparent:true,opacity:0.2});for(let i=0;i<N;i++){for(let j=i+1;j<N;j++){if(positions[i].distanceTo(positions[j])<0.9){const g=new THREE.BufferGeometry().setFromPoints([positions[i].clone().multiplyScalar(2.2),positions[j].clone().multiplyScalar(2.2)]);group.add(new THREE.Line(g,lm));}}}let lX=0,lY=0;const st=sphereState;container.addEventListener('mousedown',e=>{st.dragging=true;lX=e.clientX;lY=e.clientY;});container.addEventListener('mouseup',()=>st.dragging=false);container.addEventListener('mouseleave',()=>st.dragging=false);container.addEventListener('mousemove',e=>{if(!st.dragging)return;const dx=e.clientX-lX,dy=e.clientY-lY;lX=e.clientX;lY=e.clientY;st.rotY+=dx*0.006;st.rotX+=dy*0.006;st.velY=dx*0.006;st.velX=dy*0.006;});container.addEventListener('touchstart',e=>{st.dragging=true;lX=e.touches[0].clientX;lY=e.touches[0].clientY;},{passive:true});container.addEventListener('touchend',()=>st.dragging=false);container.addEventListener('touchmove',e=>{if(!st.dragging)return;e.preventDefault();const dx=e.touches[0].clientX-lX,dy=e.touches[0].clientY-lY;lX=e.touches[0].clientX;lY=e.touches[0].clientY;st.rotY+=dx*0.006;st.rotX+=dy*0.006;st.velY=dx*0.006;st.velX=dy*0.006;},{passive:false});function animate(){requestAnimationFrame(animate);st.time+=0.012;if(!st.dragging){st.rotY+=0.0035+st.velY;st.rotX+=0.0005+st.velX;st.velX*=0.94;st.velY*=0.94;}group.rotation.y=st.rotY;group.rotation.x=st.rotX;group.children.forEach(c=>{if(c.isSprite){const s=c.userData.baseScale||0.7;const p=c.userData.phase||0;const pulse=1+Math.sin(st.time*2+p)*0.07;c.scale.set(s*pulse,s*pulse,1);}});renderer.render(scene,camera);}animate();sphereRenderer=renderer;sphereGroup=group;sphereCamera=camera;window.addEventListener('resize',()=>{const w=container.clientWidth,h=container.clientHeight;if(w>0&&h>0){camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}});}catch(e){console.error('sphere error',e);}}
+
+/* Events */
+document.getElementById('analyze-btn').addEventListener('click',async()=>{const w=document.getElementById('word-input').value.trim();if(w)await analyze(w);});
+document.getElementById('word-input').addEventListener('keydown',async e=>{if(e.key==='Enter'){e.preventDefault();const w=e.target.value.trim();if(w)await analyze(w);}});
+document.querySelectorAll('#examples-row .example-chip').forEach(chip=>chip.addEventListener('click',()=>{document.getElementById('word-input').value=chip.dataset.word;analyze(chip.dataset.word);}));
+document.getElementById('root-btn').addEventListener('click',()=>{const w=document.getElementById('root-input').value.trim();if(w)renderRoot(w);});
+document.getElementById('root-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const w=e.target.value.trim();if(w)renderRoot(w);}});
+document.querySelectorAll('.example-chip[data-root]').forEach(chip=>chip.addEventListener('click',()=>{document.getElementById('root-input').value=chip.dataset.root;renderRoot(chip.dataset.root);}));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showScreen(a.dataset.screen);safeReplaceState('#'+a.dataset.screen);}));
+document.getElementById('compare-btn').addEventListener('click',()=>{const a=document.getElementById('cmp-a').value.trim(),b=document.getElementById('cmp-b').value.trim();if(a&&b)renderCompare(a,b);});
+document.getElementById('history-clear-btn').addEventListener('click',clearHistory);
+document.getElementById('history-export-btn').addEventListener('click',()=>{const h=loadHistory();if(!h.length){showToast('⚠️');return;}downloadFile(JSON.stringify(h,null,2),`lum-history-${Date.now()}.json`,'application/json');showToast('✅');});
+function handleURLParams(){try{const p=new URLSearchParams(location.search);const w=p.get('w');if(w){document.getElementById('word-input').value=w;setTimeout(()=>analyze(w),200);return true;}}catch(e){}return false;}
+document.addEventListener('DOMContentLoaded',()=>{try{initTheme();renderLetters();renderRules();updateHistoryBadge();const total=Object.keys(KS_DATA).length;document.getElementById('footer-seq-count').textContent=total;document.getElementById('seq-badge').textContent=total;const hasWord=handleURLParams();if(!hasWord){const h=(location.hash||'#home').replace('#','')||'home';showScreen(h);}window.addEventListener('hashchange',()=>{const s=(location.hash||'#home').replace('#','')||'home';showScreen(s);});console.log('✅ v4.3.0 — الطبقة الذكية النيلية مُدمَجة (11 خطوة · 6 روابط · 5 نبرات)');}catch(e){console.error('init',e);}});
+</script>
+  <script src="cordova.js"></script>
+  <script src="auth-gate.js"></script>
+  <script src="password-settings.js"></script>
+  <script src="app-controls.js"></script>
+  <script src="home-cards.js"></script>
+  <script src="topbar-menu.js"></script>
+  <script src="password-modal.js"></script>
+  <script src="exit-fix.js"></script>
+</body>
+</html>
