@@ -1,0 +1,24 @@
+{
+  "name": "lum-app",
+  "displayName": "الحركة العامة",
+  "version": "4.5.4",
+  "description": "تطبيق استخراج الحركة العامة للحروف",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "عبد الملك علي الحوثي",
+  "license": "ISC",
+  "dependencies": {
+    "cordova-ios": "^7.1.1",
+    "cordova-plugin-app-exit": "*",
+    "cordova-plugin-inappbrowser": "*"
+  },
+  "cordova": {
+    "platforms": ["ios"],
+    "plugins": {
+      "cordova-plugin-app-exit": {},
+      "cordova-plugin-inappbrowser": {}
+    }
+  }
+}
